@@ -1,17 +1,17 @@
    //////////////////////////////////////////////////////////////////////////////////
 //
-// Przyk³adowa aplikacja z portem UART
+// Przykadowa aplikacja z portem UART
 //
 // (C) 2009 Zbigniew Hajduk
 // http://zh.prz-rzeszow.pl
 // e-mail: zhajduk@prz-rzeszow.pl
 //
-// Ten kod Ÿród³owy mo¿e podlegaæ wolnej redystrybucji i/lub modyfikacjom 
-// na ogólnych zasadach okreœlonych licencj¹ GNU General Public License.
+// Ten kod rdowy moe podlega wolnej redystrybucji i/lub modyfikacjom 
+// na oglnych zasadach okrelonych licencj GNU General Public License.
 //
-// Autor wyra¿a nadziejê, ¿e kod wirtualnego komponentu bêdzie u¿yteczny
-// jednak nie udziela ¯ADNEJ GWARANCJI dotycz¹cej jego sprawnoœci
-// oraz przydatnoœci dla partykularnych zastosowañ.
+// Autor wyraa nadziej, e kod wirtualnego komponentu bdzie uyteczny
+// jednak nie udziela ADNEJ GWARANCJI dotyczcej jego sprawnoci
+// oraz przydatnoci dla partykularnych zastosowa.
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -64,6 +64,10 @@ begin
  tx_done_sync<=tx_done;
 end
 
+//reg [10][8] tablica = 'hello world'
+//always
+//	i=i+1 until < 10
+//assign tx_data = 8'b01010101;
 assign tx_data=rx_data;
 
 always @(posedge CLK_50MHZ) //(2)

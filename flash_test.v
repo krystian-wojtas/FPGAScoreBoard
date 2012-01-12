@@ -23,22 +23,11 @@ module flash_test(
 	output NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP,
 	input NF_STS,
 	inout NF_A[7:0],
-	inout NF_D[7:0],
+	inout NF_D[7:0]
     );
 	 
-	  NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP,
-	input NF_STS,
-	inout NF_A[7:0],
-	inout NF_D[7:0],
-	inout addr[7:0], //do polaczenia z pozostalymi modulami
-	inout data[7:0], //jak wyzej
-	input direction_rw, //kierunek odczyt lub zapis
-	input do_rw, //wyzwalacz akcji zapisu lub odczytu
-	output done, //czy juz wartosc zostala zapisana lub odczytana
-	input rst, //linia musi dotrzec rowniez do flash_clocka
-	input clk_f,
-	output czasomierz_start,
-	input czasomierz_done
+	//output czasomierz_start,
+	//input czasomierz_done
 	
 	reg addr[7:0];
 	reg data[7:0];

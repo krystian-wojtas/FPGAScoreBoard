@@ -34,77 +34,79 @@ module flash(
 	input czasomierz_done
 	);
 	
-assign NF_BYTE=1'b0; //8bit data
-assign NF_WP=1'b0; //Protect two outermost Flash boot blocks against all program and erase operations.
-assign NF_A[7:0] = addr[7:0]
-assign NF_D[7:0] = data[7:0]
+	assign NF_BYTE=1'b0; //8bit data
+	assign NF_WP=1'b0; //Protect two outermost Flash boot blocks against all program and erase operations.
+	assign NF_A[7:0] = addr[7:0];
+	assign NF_D[7:0] = data[7:0];
 
-always @posedge(rst) // czy posedge
-	//NF_RP = 1'b1; // czy 1
-	NF_CE = 1'b1; //wylaczenie ukladu
-	NF_WE = 1'b1; //wylaczenie zapisu
-	NF_OE = 1'b1; //wylaczenie odczytu
-end
-
-
-localparam 	STATE_A = 3'd0,
-		STATE_B = 3'd1,
-		STATE_C = 3'd2,
-		STATE_D = 3'd3;
-
-reg [2:0] state = STATE_A;
-
-always @ (posedge clk_f)
-begin
-	if(rst) begin
-		state <= STATE_A;
-	end
-	state <= next;
-end
-
-always @posedge(do_rw) //uklad nadrzedny nakazuje wykonanie akcji
-begin
-	if(direction_rw == 1'b1)
+	always @(posedge rst) // czy posedge
 	begin
-		case(state)
-		STATE_A: begin
+		//NF_RP = 1'b1; // czy 1
+		NF_CE = 1'b1; //wylaczenie ukladu
+		NF_WE = 1'b1; //wylaczenie zapisu
+		NF_OE = 1'b1; //wylaczenie odczytu
+	end
+
+
+	localparam 	STATE_A = 3'd0,
+			STATE_B = 3'd1,
+			STATE_C = 3'd2,
+			STATE_D = 3'd3;
+
+	reg [2:0] state = STATE_A;
+	reg [2:0] next_state = STATE_A;
+
+	always @(posedge clk_f)
+	begin
+		if(rst) begin
+			state <= STATE_A;
+		end
+		state <= next_state;
+	end
+
+	always @(posedge do_rw) //uklad nadrzedny nakazuje wykonanie akcji
+	begin
+		if(direction_rw == 1'b1)
+		begin
+			case(state)
+			STATE_A: begin
+					NF_CE <= 1'b0;
+					NF_OE <= 1'b0;
+					next_state <= STATE_B;
+					czasomierz_startuj <= 1'b1;
+				end
+			STATE_B: begin
+					if(czasomierz_done) begin
+						next_state <= STATE_C;
+					end
+				end
+			STATE_C: begin
+					NF_CE <= 1'b1;
+					NF_OE <= 1'b1;
+				end
+			endcase
+		end
+		else
+		begin
+			case(state)
+			STATE_A: begin
 				NF_CE <= 1'b0;
-				NF_OE <= 1'b0;
-				next_state <= STATE_B;
-				czasomierz_startuj <= 1'b1;
-			end
-		STATE_B: begin
-				if(czasomierz_done)
-					next_state <= STATE_C;
-				end
-			end
-		STATE_C: begin
-				NF_CE <= 1'b1;
 				NF_OE <= 1'b1;
-			end
-		endcase
-	end
-	else
-		case(state)
-		STATE_A: begin
-			NF_CE <= 1'b0;
-			NF_OE <= 1'b1;
-			NF_WE <= 1'b0;
+				NF_WE <= 1'b0;
 				next_state <= STATE_B;
 				czasomierz_startuj <= 1'b1;
-			end
-		STATE_B: begin
-				if(czasomierz_done)
-					next_state <= STATE_C;
 				end
-			end
-		STATE_C: begin
-			NF_CE <= 1'b1;
-			NF_WE <= 1'b1;
-			end
-		endcase
+			STATE_B: begin
+					if(czasomierz_done) begin
+						next_state <= STATE_C;
+					end
+				end
+			STATE_C: begin
+				NF_CE <= 1'b1;
+				NF_WE <= 1'b1;
+				end
+			endcase
+		end
 	end
-end
-end
 
 endmodule

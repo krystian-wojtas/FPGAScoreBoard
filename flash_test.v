@@ -42,9 +42,9 @@ module flash_test(
 	flash fl(NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP, NF_STS, NF_A[7:0], NF_D[7:0], addr[7:0], data[7:0], direction_rw, do_rw, done, rst, clk_f)
 	
 	#20
-	addr[7:0] = 8'b00110101;
-	data[7:0] = 8'b11001001;
-	direction_rw = 1'b0; //write
-	do_rw = 1'b1;
+	assign addr[7:0] = 8'b00110101;
+	assign data[7:0] = 8'b11001001;
+	assign direction_rw = 1'b0; //write
+	assign do_rw = 1'b1;
 	#100
 endmodule

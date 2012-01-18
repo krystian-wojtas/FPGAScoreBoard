@@ -18,38 +18,43 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module flash_test(
-	input CLK_50MHZ,
-	output NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP,
-	input NF_STS,
-	inout NF_A[7:0],
-	inout NF_D[7:0]
-    );
+module flash_test();
 	 
 	//output czasomierz_start,
-	//input czasomierz_done
-	
+	//input czasomierz_done	
+	reg CLK_50MHZ;
+	reg RST;	
+	//linie flasha
+	//reg NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP, NF_STS;
+	reg NF_CE;
+	reg NF_BYTE;
+	reg NF_OE;
+	reg NF_RP;
+	reg NF_WE;
+	reg NF_WP;
+	reg NF_BYTE;
+	reg NF_STS;
+	reg NF_A[7:0];
+	reg NF_D[7:0];
+	//interfejs modulu
 	reg addr[7:0];
 	reg data[7:0];
-	reg direction_rw;
-	reg do_rw;
-	wire done;
-	reg rst = 1'b0;
-	wire flash_timer_start;
-	wire flash_timer_done;
-	flash_clock fl_c(CLK_50MHZ, flash_timer_start, flash_timer_done);
-	//TODO czasomierz
-
-	flash fl(CLK_50MHZ, NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP, NF_STS, NF_A[7:0], NF_D[7:0], addr[7:0], data[7:0], direction_rw, do_rw, done, rst, flash_timer_start, flash_timer_done)
-;
+	wire direction_rw;
+	wire fb_action;
+	//czasomierz flasha
+	wire ft_action;
 	
-	initial
-	begin	
-		#20;
-		addr[7:0] = 8'b00110101;
-		data[7:0] = 8'b11001001;
-		direction_rw = 1'b0; //write
-		do_rw = 1'b1;
-	end
+	
+	flash_clock fl_c(CLK_50MHZ, ft_action);
+	flash fl(RST, CLK_50MHZ, NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP, NF_STS, NF_A[7:0], NF_D[7:0], addr[7:0], data[7:0], direction_rw, fb_action, ft_action);
+
+	
+//	initial
+//	begin	
+//		#20;
+//		addr[7:0] = 8'b00110101;
+//		data[7:0] = 8'b11001001;
+//		direction_rw = 1'b1; //write
+//	end
 	
 endmodule

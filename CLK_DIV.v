@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date:    21:46:44 01/11/2012 
+// Create Date:    19:39:32 01/14/2012 
 // Design Name: 
-// Module Name:    flash_clock 
+// Module Name:    CLK_DIV 
 // Project Name: 
 // Target Devices: 
 // Tool versions: 
@@ -18,26 +18,30 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module flash_clock //rename FlashTimer ??
-	(input CLK_50MHZ,
-	 inout reg ft_action
-	);
-	
-reg [3:0] cnt; //TODO czasy
 
-always @(posedge ft_action)
-begin
-	cnt = 0;
-end
-	
-always @(posedge CLK_50MHZ)
-	if(ft_action) begin //TODO czy przejdzie? ft_action rowniez w module wyzej
-		if(cnt<4'd7) cnt<=cnt+1;
-		else
+
+//		( BASE_FREQ * K ) / N
+
+module CLK_DIV #(parameter K=1, N=1)
+	(
+	input RST,
+   input CLK_IN,
+   input CLK_OUT
+   );
+
+reg[N-1:0] acc;
+
+always @(posedge CLK_IN or negedge CLK_IN)
+	if( RST )
 		begin
-			cnt<=0;
-			ft_action<=0;
+			acc = 0;
 		end
+
+always @(posedge CLK_IN)
+	begin
+		acc <= acc + K;
 	end
+
+assign CLK_OUT = acc[N-1];
 
 endmodule

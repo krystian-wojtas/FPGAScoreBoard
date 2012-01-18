@@ -64,3 +64,13 @@ xilinxsim.ini
 xlnx_auto_0_xdb/
 xst/
 uart_test.cmd_log
+
+FPGAScoreBoard.gise
+FPGAScoreBoard.gise2
+FPGAScoreBoard.xise
+flash_test_beh.prj
+uart_test_beh.prj
+uart_test_isim_beh.exe
+uart_test_isim_beh.wdb
+uart_test_isim_beh1.wdb
+

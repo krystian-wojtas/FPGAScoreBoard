@@ -36,7 +36,11 @@ begin
 end
 
 always @(posedge CLK_TX)
- if(~RST) begin done_<=1'b1; tx_<=1'b1; end
+ if(~RST) 
+	begin 
+	done_<=1'b1; 
+	tx_<=1'b1;
+	end
  else
  begin
   if (send_sync2&done_)

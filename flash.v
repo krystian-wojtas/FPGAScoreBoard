@@ -18,28 +18,26 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module flash(
+module flash( //rename FlashBridge?
+	input RST, //linia musi dotrzec rowniez do flash_clocka
+	input CLK_50MHZ,
 	output NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP,
 	input NF_STS,
 	inout NF_A[7:0],
-	inout NF_D[7:0],
+	output NF_D[7:0],
 	inout addr[7:0], //do polaczenia z pozostalymi modulami
-	inout data[7:0], //jak wyzej
-	input direction_rw, //kierunek odczyt lub zapis
-	input do_rw, //wyzwalacz akcji zapisu lub odczytu
-	output done, //czy juz wartosc zostala zapisana lub odczytana
-	input rst, //linia musi dotrzec rowniez do flash_clocka
-	input clk_f,
-	output flash_timer_start,
-	input flash_timer_done
+	input data[7:0], //jak wyzej
+	input reg direction_rw, //kierunek odczyt lub zapis
+	inout reg fb_action, //podnoszac linie z zew jest wyzwalaczem akcji zapisu lub odczytu; obnizajac z wew informuje ze akcja zostala wykonana
+	inout ft_action
 	);
 	
 	assign NF_BYTE=1'b0; //8bit data
 	assign NF_WP=1'b0; //Protect two outermost Flash boot blocks against all program and erase operations.
-	assign NF_A[7:0] = addr[7:0];
-	assign NF_D[7:0] = data[7:0];
+	assign NF_A[7:0] = addr[7:0]; //TODO czy dziala w obie strony ??
+	assign NF_D[7:0] = data[7:0]; //TODO jak wyzej ??
 
-	always @(posedge rst) // czy posedge
+	always @(posedge RST) // czy posedge
 	begin
 		//NF_RP = 1'b1; // czy 1
 		NF_CE = 1'b1; //wylaczenie ukladu
@@ -56,56 +54,66 @@ module flash(
 	reg [2:0] state = STATE_A;
 	reg [2:0] next_state = STATE_A;
 
-	always @(posedge clk_f)
+	always @(posedge CLK_50MHZ)
 	begin
-		if(rst) begin
+		if(RST) begin
 			state <= STATE_A;
 		end
 		state <= next_state;
 	end
 
-	always @(posedge do_rw) //uklad nadrzedny nakazuje wykonanie akcji
+	always @(posedge CLK_50MHZ)
 	begin
-		if(direction_rw == 1'b1)
+		if(fb_action == 1'b1) //uklad nadrzedny nakazal wykonanie akcji
 		begin
-			case(state)
-			STATE_A: begin
-					NF_CE <= 1'b0;
-					NF_OE <= 1'b0;
-					next_state <= STATE_B;
-					flash_timer_start <= 1'b1;
-				end
-			STATE_B: begin
-					if(flash_timer_done) begin
-						next_state <= STATE_C;
+			if(direction_rw == 1'b1) // kierunek: odczyt
+			begin
+				case(state)
+				STATE_A: begin
+						NF_CE <= 1'b0;
+						NF_OE <= 1'b0;
+						ft_action <= 1'b1;
+						next_state <= STATE_B;
 					end
-				end
-			STATE_C: begin
-					NF_CE <= 1'b1;
-					NF_OE <= 1'b1;
-				end
-			endcase
-		end
-		else
-		begin
-			case(state)
-			STATE_A: begin
-				NF_CE <= 1'b0;
-				NF_OE <= 1'b1;
-				NF_WE <= 1'b0;
-				next_state <= STATE_B;
-				flash_timer_start <= 1'b1;
-				end
-			STATE_B: begin
-					if(flash_timer_done) begin
-						next_state <= STATE_C;
+				STATE_B: begin
+						if(ft_action == 0) begin
+							next_state <= STATE_C;
+						end
+						else begin //czy konieczne?
+							next_state <= STATE_B;
+						end
 					end
-				end
-			STATE_C: begin
-				NF_CE <= 1'b1;
-				NF_WE <= 1'b1;
-				end
-			endcase
+				STATE_C: begin
+						NF_CE <= 1'b1;
+						NF_OE <= 1'b1;
+						next_state <= STATE_A;
+						fb_action <= 0; // odczyt ukonczony
+					end
+				endcase
+			end
+			else
+			begin
+				case(state)
+				STATE_A: begin
+						NF_CE <= 1'b0;
+						NF_OE <= 1'b1;
+						NF_WE <= 1'b0;
+						next_state <= STATE_B;
+						ft_action <= 1'b1;
+					end
+				STATE_B: begin
+						if(ft_action == 0) begin
+							next_state <= STATE_C;
+						end
+					end
+				STATE_C: begin
+						NF_CE <= 1'b1;
+						NF_WE <= 1'b1;
+						next_state <= STATE_A;
+						fb_action <= 0;
+					end
+				endcase
+			end
 		end
 	end
 

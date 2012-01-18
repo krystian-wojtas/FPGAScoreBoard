@@ -22,7 +22,8 @@ module uart_test(input CLK_50MHZ,
 		 inout [7:0] LCD_DB,
 		 output [7:0] LED,
 		 input RS232_DCE_RXD,
-		 output RS232_DCE_TXD);
+		 output RS232_DCE_TXD
+		 );
 
 
 reg [3:0] ss;
@@ -38,8 +39,10 @@ wire [7:0] tx_data;
 wire tx_done;
 reg tx_done_sync;
 
-debouncer d1(.clk(CLK_50MHZ),.PB({BTN_SOUTH,BTN_WEST,BTN_EAST,BTN_NORTH}),
-                             .BUTTONS({sw1,sw2,sw3,sw4}));
+//debouncer d1(.clk(CLK_50MHZ),.PB({BTN_SOUTH,BTN_WEST,BTN_EAST,BTN_NORTH}),
+//                             .BUTTONS({sw1,sw2,sw3,sw4}));
+
+assign sw1 = BTN_SOUTH;
 
 lcd_putchar_8 d2(.CLK_1MHZ(clk_1MHz),.CLK_WR(CLK_50MHZ),.WR_EN(WR_EN),
                  .RST(~sw1),.BF(BUSY_FLAG),.DATA_IN(DATA_IN),.LCD_E(LCD_E),

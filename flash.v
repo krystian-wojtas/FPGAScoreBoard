@@ -30,8 +30,8 @@ module flash(
 	output done, //czy juz wartosc zostala zapisana lub odczytana
 	input rst, //linia musi dotrzec rowniez do flash_clocka
 	input clk_f,
-	output czasomierz_start,
-	input czasomierz_done
+	output flash_timer_start,
+	input flash_timer_done
 	);
 	
 	assign NF_BYTE=1'b0; //8bit data
@@ -73,10 +73,10 @@ module flash(
 					NF_CE <= 1'b0;
 					NF_OE <= 1'b0;
 					next_state <= STATE_B;
-					czasomierz_startuj <= 1'b1;
+					flash_timer_start <= 1'b1;
 				end
 			STATE_B: begin
-					if(czasomierz_done) begin
+					if(flash_timer_done) begin
 						next_state <= STATE_C;
 					end
 				end
@@ -94,10 +94,10 @@ module flash(
 				NF_OE <= 1'b1;
 				NF_WE <= 1'b0;
 				next_state <= STATE_B;
-				czasomierz_startuj <= 1'b1;
+				flash_timer_start <= 1'b1;
 				end
 			STATE_B: begin
-					if(czasomierz_done) begin
+					if(flash_timer_done) begin
 						next_state <= STATE_C;
 					end
 				end

@@ -19,7 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module flash_test(
-	input CLK,
+	input CLK_50MHZ,
 	output NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP,
 	input NF_STS,
 	inout NF_A[7:0],
@@ -35,16 +35,21 @@ module flash_test(
 	reg do_rw;
 	wire done;
 	reg rst = 1'b0;
-	wire clk_f;
-	flash_clock fl_c(CLK, clk_f);
+	wire flash_timer_start;
+	wire flash_timer_done;
+	flash_clock fl_c(CLK_50MHZ, flash_timer_start, flash_timer_done);
 	//TODO czasomierz
 
-	flash fl(NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP, NF_STS, NF_A[7:0], NF_D[7:0], addr[7:0], data[7:0], direction_rw, do_rw, done, rst, clk_f)
+	flash fl(CLK_50MHZ, NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP, NF_STS, NF_A[7:0], NF_D[7:0], addr[7:0], data[7:0], direction_rw, do_rw, done, rst, flash_timer_start, flash_timer_done)
+;
 	
-	#20
-	assign addr[7:0] = 8'b00110101;
-	assign data[7:0] = 8'b11001001;
-	assign direction_rw = 1'b0; //write
-	assign do_rw = 1'b1;
-	#100
+	initial
+	begin	
+		#20;
+		addr[7:0] = 8'b00110101;
+		data[7:0] = 8'b11001001;
+		direction_rw = 1'b0; //write
+		do_rw = 1'b1;
+	end
+	
 endmodule

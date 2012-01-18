@@ -19,18 +19,29 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module flash_clock
-	(input CLK,
-	 output CLK_F
+	(input CLK_50MHZ,
+	 inout reg flash_timer_start,
+	 output reg flash_timer_done
 	);
 	
 reg [3:0] cnt; //TODO czasy
-reg clk;
-	
-always @(posedge CLK_F)
-	if(cnt<4'd7) cnt<=cnt+1;
-	else
-	begin cnt<=0; clk<=~clk; end
+reg timer_count;
 
-assign CLK_F=clk;
+always @(posedge flash_timer_start)
+begin
+	timer_count = 1'b1;
+	flash_timer_start = 1'b0;
+	cnt = 0;
+end
+	
+always @(posedge CLK_50MHZ)
+	if(timer_count) begin
+		if(cnt<4'd7) cnt<=cnt+1;
+		else
+		begin
+			cnt<=0;
+			flash_timer_done <= 1'b1;
+		end
+	end
 
 endmodule

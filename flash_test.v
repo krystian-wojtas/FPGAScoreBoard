@@ -49,12 +49,17 @@ module flash_test();
 	flash fl(RST, CLK_50MHZ, NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP, NF_STS, NF_A[7:0], NF_D[7:0], addr[7:0], data[7:0], direction_rw, fb_action, ft_action);
 
 	
-//	initial
-//	begin	
-//		#20;
-//		addr[7:0] = 8'b00110101;
-//		data[7:0] = 8'b11001001;
-//		direction_rw = 1'b1; //write
-//	end
+	initial
+	begin	
+		#20;
+		NF_A[7:0] = 8'b11111000;
+		NF_D[7:0] = 8'b00011111;
+		#40;
+		addr[7:0] = 8'b00110101;
+		data[7:0] = 8'b11001001;
+		direction_rw = 1'b1; //write
+		#40;
+		fb_action = 1;
+	end
 	
 endmodule

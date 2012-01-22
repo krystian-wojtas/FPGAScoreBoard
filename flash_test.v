@@ -22,7 +22,7 @@ module flash_test;
 	 
 	//output czasomierz_start,
 	//input czasomierz_done	
-	reg CLK_50MHZ;
+	reg CLK_50MHZ = 0;
 	reg RST;	
 	//linie flasha
 	wire NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP;
@@ -40,43 +40,47 @@ module flash_test;
 	wire [7:0] addr;
 	wire [7:0] data;
 	reg direction_rw;
-	wire fb_action;
+	wire fb_start;
+	wire fb_done;
 	//czasomierz flasha
-	wire ft_action;
+	wire ft_start;
+	wire ft_done;
 	
 	reg [7:0] NF_A_;
 	reg [7:0] NF_D_;
 	reg [7:0] addr_;
 	reg [7:0] data_;
-	reg fb_action_;
+	reg fb_start_;
+//	reg fb_action_;
 	assign NF_A = NF_A_;
 	assign NF_D = NF_D_;
 	assign addr = addr_;
 	assign data = data_;
-	assign fb_action = fb_action_;	
+	assign fb_start = fb_start_;
+//	assign fb_action = fb_action_;	
 	
-	flash_clock fl_c(CLK_50MHZ, ft_action);
-	flash fl(RST, CLK_50MHZ, NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP, NF_STS, NF_A[7:0], NF_D[7:0], addr[7:0], data[7:0], direction_rw, fb_action, ft_action);
+	FlashTimer fl_timer(RST, CLK_50MHZ, ft_action);
+	Flash fl(RST, CLK_50MHZ, NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP, NF_STS, NF_A[7:0], NF_D[7:0], addr[7:0], data[7:0], direction_rw, fb_start, fb_done, ft_start, ft_done);
 
 	
 	initial
-	begin	
+	begin
+		#10;
+		RST = 0;
+		#10;
+		RST = 1;
+		#10;
+		RST = 0;
+		
 		#20;
 		NF_A_[7:0] = 8'b11111000;
 		NF_D_[7:0] = 8'b00011111;
 		#40;
 		addr_[7:0] = 8'b00110101;
 		data_[7:0] = 8'b11001001;
-		direction_rw = 1'b1; //write
+		direction_rw = 1'b0; //read
 		#40;
-		fb_action_ = 1;
+		fb_start_ = 1;
 	end
-	
-	/*** SIMULATION CLK 50 MHZ ***/
-	always
-		begin
-		#1;
-		CLK_50MHZ = ~CLK_50MHZ;
-		end
 	
 endmodule

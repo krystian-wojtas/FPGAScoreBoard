@@ -18,29 +18,38 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module flash_clock //rename FlashTimer ??
+module FlashTimer //rename FlashTimer ??
 	(input CLK_50MHZ,
-	 inout ft_action
+	 input RST,
+	 input start,
+	 output reg done
 	);
 	
 	reg [3:0] cnt; //TODO czasy
-	reg ft_action_;
+	reg counting;
 
-	always @(posedge ft_action_)
+	always @(posedge start)
 	begin
 		cnt = 0;
+		done = 0;
+		counting = 1;
+	end
+
+	always @(posedge RST)
+	begin
+		done = 0;
+		counting = 0;
 	end
 		
 	always @(posedge CLK_50MHZ)
-		if(ft_action_) begin //TODO czy przejdzie? ft_action rowniez w module wyzej
-			if(cnt<4'd7) cnt<=cnt+1;
+		if(counting) begin //TODO czy przejdzie? ft_action rowniez w module wyzej
+			if(cnt<4'd7)
+				cnt<=cnt+1; //TODO zakres
 			else
-			begin
-				cnt<=0;
-				ft_action_<=0;
-			end
+				done<=1;
 		end
-
-	assign ft_action = ft_action_;
+	
+	always @(posedge done)
+		counting = 0;
 
 endmodule

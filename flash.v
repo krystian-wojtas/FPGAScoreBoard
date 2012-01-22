@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module flash( //rename FlashBridge?
+module Flash( //rename FlashBridge?
 	input RST, //linia musi dotrzec rowniez do flash_clocka
 	input CLK_50MHZ,
 	output reg NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP,
@@ -28,8 +28,10 @@ module flash( //rename FlashBridge?
 	inout [7:0] addr, //do polaczenia z pozostalymi modulami
 	input [7:0] data, //jak wyzej
 	input direction_rw, //kierunek odczyt lub zapis
-	inout fb_action, //podnoszac linie z zew jest wyzwalaczem akcji zapisu lub odczytu; obnizajac z wew informuje ze akcja zostala wykonana
-	inout ft_action
+	input fb_start, //podnoszac linie z zew jest wyzwalaczem akcji zapisu lub odczytu; obnizajac z wew informuje ze akcja zostala wykonana
+	output reg fb_done,
+	output reg ft_start,
+	input ft_done
 	);
 	
 	assign NF_A[7:0] = addr[7:0]; //TODO czy dziala w obie strony ??
@@ -43,11 +45,11 @@ module flash( //rename FlashBridge?
 //	assign NF_OE = NF_OE_;
 		
 	reg direction_rw_;
-	reg fb_action_;
-	reg ft_action_;
+//	reg fb_action_;
+//	reg ft_action_;
 	assign direction_rw = direction_rw_;
-	assign fb_action = fb_action_;
-	assign ft_action = ft_action_;
+//	assign fb_action = fb_action_;
+//	assign ft_action = ft_action_;
 
 	always @(posedge RST) // czy posedge
 	begin
@@ -78,7 +80,7 @@ module flash( //rename FlashBridge?
 
 	always @(posedge CLK_50MHZ)
 	begin
-		if(fb_action == 1'b1) //uklad nadrzedny nakazal wykonanie akcji
+		if(fb_start == 1'b1) //uklad nadrzedny nakazal wykonanie akcji
 		begin
 			if(direction_rw == 1'b1) // kierunek: odczyt
 			begin
@@ -86,11 +88,11 @@ module flash( //rename FlashBridge?
 				STATE_A: begin
 						NF_CE <= 1'b0;
 						NF_OE <= 1'b0;
-						ft_action_ <= 1'b1;
+						ft_start <= 1'b1;
 						next_state <= STATE_B;
 					end
 				STATE_B: begin
-						if(ft_action_ == 0) begin
+						if(ft_done == 1) begin
 							next_state <= STATE_C;
 						end
 						else begin //czy konieczne?
@@ -101,7 +103,8 @@ module flash( //rename FlashBridge?
 						NF_CE <= 1'b1;
 						NF_OE <= 1'b1;
 						next_state <= STATE_A;
-						fb_action_ <= 0; // odczyt ukonczony
+						ft_start <= 0; // odczyt ukonczony
+						fb_done <= 0;
 					end
 				endcase
 			end
@@ -113,10 +116,10 @@ module flash( //rename FlashBridge?
 						NF_OE <= 1'b1;
 						NF_WE <= 1'b0;
 						next_state <= STATE_B;
-						ft_action_ <= 1'b1;
+						ft_start <= 1'b1;
 					end
 				STATE_B: begin
-						if(ft_action_ == 0) begin
+						if(ft_done == 1) begin
 							next_state <= STATE_C;
 						end
 					end
@@ -124,7 +127,8 @@ module flash( //rename FlashBridge?
 						NF_CE <= 1'b1;
 						NF_WE <= 1'b1;
 						next_state <= STATE_A;
-						fb_action_ <= 0;
+						ft_start <= 0;
+						fb_done <= 0;
 					end
 				endcase
 			end

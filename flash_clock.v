@@ -22,9 +22,8 @@ module FlashTimer //rename FlashTimer ??
 	(input CLK_50MHZ,
 	 input RST,
 	 input start,
-	 output done
+	 output reg done
 	);
-reg done;	
 	
 localparam [2:0]  IDLE = 3'd0,
 						COUNTING = 3'd1,

@@ -23,15 +23,13 @@ module Flash( //rename FlashBridge?
 	input CLK_50MHZ,
 	output reg NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP,
 	input NF_STS,
-	inout [7:0] NF_A,
-	output [7:0] NF_D,
-	inout [7:0] addr, //do polaczenia z pozostalymi modulami
-	input [7:0] data, //jak wyzej
+	output [7:0] NF_A,
+	inout [7:0] NF_D,
+	input [7:0] addr, //do polaczenia z pozostalymi modulami
+	inout [7:0] data, //jak wyzej
 	input direction_rw, //kierunek odczyt lub zapis
 	input fb_start, //podnoszac linie z zew jest wyzwalaczem akcji zapisu lub odczytu; obnizajac z wew informuje ze akcja zostala wykonana
-	output reg fb_done,
-	output reg ft_start,
-	input ft_done
+	output reg fb_done
 	);
 	
 	assign NF_A[7:0] = addr[7:0]; //TODO czy dziala w obie strony ??
@@ -51,16 +49,20 @@ module Flash( //rename FlashBridge?
 //	assign fb_action = fb_action_;
 //	assign ft_action = ft_action_;
 
-	always @(posedge RST) // czy posedge
-	begin
-		//NF_RP = 1'b1; // czy 1
-		NF_CE = 1'b1; //wylaczenie ukladu
-		NF_WE = 1'b1; //wylaczenie zapisu
-		NF_OE = 1'b1; //wylaczenie odczytu
-		NF_BYTE=1'b0; //8bit data
-		NF_WP=1'b0; //Protect two outermost Flash boot blocks against all program and erase operations.
-	end
+//	always @(posedge RST) // czy posedge
+//	begin
+//		//NF_RP = 1'b1; // czy 1
+//		NF_CE = 1'b1; //wylaczenie ukladu
+//		NF_WE = 1'b1; //wylaczenie zapisu
+//		NF_OE = 1'b1; //wylaczenie odczytu
+//		NF_BYTE=1'b0; //8bit data
+//		NF_WP=1'b0; //Protect two outermost Flash boot blocks against all program and erase operations.
+//	end
 
+	
+	reg ft_start;
+	wire ft_done;
+	FlashTimer fl_timer(.CLK_50MHZ(CLK_50MHZ), .RST(RST), .start(ft_start), .done(ft_done));
 
 	localparam 	STATE_A = 3'd0,
 			STATE_B = 3'd1,
@@ -73,6 +75,13 @@ module Flash( //rename FlashBridge?
 	always @(posedge CLK_50MHZ)
 	begin
 		if(RST) begin
+			//NF_RP = 1'b1; // czy 1
+			NF_CE = 1'b1; //wylaczenie ukladu
+			NF_WE = 1'b1; //wylaczenie zapisu
+			NF_OE = 1'b1; //wylaczenie odczytu
+			NF_BYTE=1'b0; //8bit data
+			NF_WP=1'b0; //Protect two outermost Flash boot blocks against all program and erase operations.
+
 			state <= STATE_A;
 		end
 		state <= next_state;
@@ -80,7 +89,10 @@ module Flash( //rename FlashBridge?
 
 	always @(posedge CLK_50MHZ)
 	begin
-		if(fb_start == 1'b1) //uklad nadrzedny nakazal wykonanie akcji
+		if(RST) begin
+			fb_done = 0;
+			ft_start = 0;
+		end else if(fb_start == 1'b1) //uklad nadrzedny nakazal wykonanie akcji
 		begin
 			if(direction_rw == 1'b1) // kierunek: odczyt
 			begin

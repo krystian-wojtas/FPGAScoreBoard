@@ -25,8 +25,8 @@ module flash_timer_test;
 	
 	reg RST = 0;
 	reg start = 0;
-	wire done = 0;
-	FlashTimer fl_t( CLK_50MHZ, RST,	start, done	);
+	wire done;
+	FlashTimer fl_t( .CLK_50MHZ(CLK_50MHZ), .RST(RST),	.start(start), .done(done)	);
 	
 	initial
 	begin
@@ -37,6 +37,10 @@ module flash_timer_test;
 		
 		#4;
 		start = 1;
+	end
+	
+	always @(posedge done) begin
+		start = 0;
 	end
 
 endmodule

@@ -18,8 +18,8 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module MANAGER(
-    );
+module MANAGER( CLK_50MHZ, RST, RS_FLOW, RS_DATAIN, RS_DATAOUT, RS_TRG_READ, RS_TRG_WRITE,
+						RS_DONE, FL_DATA, FL_ADDR, FL_TRG, FL_STATUS, FL_FLOW );
 input CLK_50MHZ;
 input RST;
 output reg RS_FLOW;
@@ -28,16 +28,19 @@ input [7:0] RS_DATAOUT;
 output reg RS_TRG_READ, RS_TRG_WRITE;
 input RS_DONE;
 
-	 
-// WAIT FOR DATA FROM RS
-// WRITE DATA TO FLASH
-/*
- *	IDLE (reset)
- * WAITING_RS (waiting for data form RS)
- *	READING DATA (from RS)
- *	WRITING DATA (to FLASH)
- *	WAITING_FLASH (for FLASH to ack)
- *	STOP
-												*/
+inout [7:0] FL_DATA;
+output reg [7:0] FL_ADDR; 
+output FL_TRG;
+input FL_STATUS;
+output FL_FLOW;
+
+reg [7:0] data;
+	
+manager_fsm fsm(	.CLK_50MHZ(CLK_50MHZ), .RST(RST),
+						.RS_DONE(RS_DONE), .RS_DATAOUT(RS_DATAOUT)
+						.FL_DATA(FL_DATA), .FL_TRG(FL_TRG), .FL_STATUS(FL_STATUS)
+					);										
+
+assign FL_ADDR = 8'b11001100;
 
 endmodule

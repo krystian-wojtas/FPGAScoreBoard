@@ -59,7 +59,6 @@ always @* begin
 	case( state )
 		IDLE: begin
 				next = WAITING_RS;
-				data = 8'bx;
 		end
 		
 		WAITING_RS: begin
@@ -85,7 +84,6 @@ always @* begin
 		
 		STOP: begin
 				next = STOP;
-				data = 8'bx;
 		end
 	
 end

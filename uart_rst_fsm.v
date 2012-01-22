@@ -42,7 +42,9 @@ always @(posedge CLK or posedge RST) begin
 	if( RST ) state <= IDLE;
 	else begin 
 		state <= next;
-		if( mod_cnt ) 	mod_cnt <= mod_cnt - 1;
+		if ( state == S1 ) mod_cnt <= 255;
+		else if( mod_cnt ) 	mod_cnt <= mod_cnt - 1;
+		//if( state == S2 ) mod_cnt <= 255;
 	end
 end
 
@@ -64,7 +66,7 @@ always @* begin
 							next = S2;
 			CLK_RST = 1;
 			MOD_RST = 1;
-			mod_cnt = 255;
+			//mod_cnt = 255;
 		end
 		
 		S2: begin /**********************/

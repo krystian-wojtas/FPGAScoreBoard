@@ -45,7 +45,31 @@ module UART_CLOCK #(parameter K=1, N=1)
    output CLK_TX
    );
 
-uart_clk_fsm #(.K(K),.N(N))
-	clk(.RST(RST), .CLK(CLK),.CLK_RX(CLK_RX),.CLK_TX(CLK_TX));
+
+reg [N-1:0] acc = 0;
+reg [3:0] cnt = 0;
+reg clk_1_16 = 0;
+
+/*
+always @(posedge CLK)
+	begin
+	if(RST)
+		begin
+		acc = 0;
+		cnt = 0;
+		clk_1_16 = 0;
+		end
+	end
+*/
+
+always @(posedge CLK) acc<=acc+K; //(1)
+assign CLK_RX=acc[N-1];
+
+always @(posedge CLK_RX) //(2)
+ if(cnt<4'd7) cnt<=cnt+1;
+ else
+ begin cnt<=0; clk_1_16<=~clk_1_16; end
+ 
+assign CLK_TX=clk_1_16;
 
 endmodule

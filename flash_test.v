@@ -73,18 +73,12 @@ module flash_test;
 		#10;
 		RST = 0;
 		
-		#20;
-//		NF_A[7:0] = 8'dx;
-//		NF_D[7:0] = 8'dx;
 		#40;
 		addr[7:0] = 8'b00110101;
 		data[7:0] = 8'b11001001;
 		direction_rw = 1'b0; //write
 		#40;
 		fb_start = 1;
-		
-		//#100;
-		//fb_done = 1;
 	end
 	
 endmodule

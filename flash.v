@@ -24,17 +24,21 @@ module Flash( //rename FlashBridge?
 	output reg NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP,
 	input NF_STS,
 	output [7:0] NF_A,
-	inout [7:0] NF_D,
+	output [7:0] NF_D,
 	input [7:0] addr, //do polaczenia z pozostalymi modulami
-	inout [7:0] data, //jak wyzej
+	input [7:0] data, //jak wyzej
 	input direction_rw, //kierunek odczyt lub zapis
 	input fb_start, //podnoszac linie z zew jest wyzwalaczem akcji zapisu lub odczytu; obnizajac z wew informuje ze akcja zostala wykonana
 	output reg fb_done
 	);
 	
-	assign NF_A[7:0] = addr[7:0]; //TODO czy dziala w obie strony ??
-	assign NF_D[7:0] = data[7:0]; //TODO jak wyzej ??
+		assign NF_A[7:0] = addr[7:0]; //TODO czy dziala w obie strony ??
+		assign NF_D[7:0] = data[7:0]; //TODO jak wyzej ??
 	
+//	always @* begin
+//		NF_A[7:0] = addr[7:0]; //TODO czy dziala w obie strony ??
+//		NF_D[7:0] = data[7:0]; //TODO jak wyzej ??
+//	end
 //	reg NF_CE_;
 //	reg NF_WE_;
 //	reg NF_OE_;
@@ -101,6 +105,7 @@ module Flash( //rename FlashBridge?
 						NF_CE <= 1'b0;
 						NF_OE <= 1'b0;
 						ft_start <= 1'b1;
+						fb_done <= 1'b0;
 						next_state <= STATE_B;
 					end
 				STATE_B: begin
@@ -116,7 +121,7 @@ module Flash( //rename FlashBridge?
 						NF_OE <= 1'b1;
 						next_state <= STATE_A;
 						ft_start <= 0; // odczyt ukonczony
-						fb_done <= 0;
+						fb_done <= 1;
 					end
 				endcase
 			end
@@ -129,6 +134,7 @@ module Flash( //rename FlashBridge?
 						NF_WE <= 1'b0;
 						next_state <= STATE_B;
 						ft_start <= 1'b1;
+						fb_done <= 1'b0;
 					end
 				STATE_B: begin
 						if(ft_done == 1) begin
@@ -140,7 +146,7 @@ module Flash( //rename FlashBridge?
 						NF_WE <= 1'b1;
 						next_state <= STATE_A;
 						ft_start <= 0;
-						fb_done <= 0;
+						fb_done <= 1;
 					end
 				endcase
 			end

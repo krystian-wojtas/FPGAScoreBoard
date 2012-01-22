@@ -37,26 +37,26 @@ module flash_test;
 	wire [7:0] NF_A;
 	wire [7:0] NF_D;
 	//interfejs modulu
-	wire [7:0] addr;
-	wire [7:0] data;
+	reg [7:0] data;	reg [7:0] addr;
+
 	reg direction_rw;
-	wire fb_start;
+	reg fb_start = 0;
 	wire fb_done;
 	//czasomierz flasha
 	
-	reg [7:0] NF_A_;
-	reg [7:0] NF_D_;
-	reg [7:0] addr_;
-	reg [7:0] data_;
-	reg fb_start_;
-	reg fb_done_;
+	//reg [7:0] NF_A_;
+	//reg [7:0] NF_D_;
+	//reg [7:0] addr_;
+	//reg [7:0] data_;
+//	reg fb_start_;
+//	reg fb_done_;
 //	reg fb_action_;
-	assign NF_A = NF_A_;
-	assign NF_D = NF_D_;
-	assign addr = addr_;
-	assign data = data_;
-	assign fb_start = fb_start_;
-	assign fb_done = fb_done_;
+//	assign NF_A = NF_A_;
+//	assign NF_D = NF_D_;
+//	assign addr = addr_;
+//	assign data = data_;
+//	assign fb_start = fb_start_;
+//	assign fb_done = fb_done_;
 //	assign fb_action = fb_action_;	
 	
 	
@@ -65,10 +65,7 @@ module flash_test;
 
 	
 	initial
-	begin
-		fb_start_ = 0;
-		fb_done_ = 0;
-	
+	begin	
 		#10;
 		RST = 0; //TODO reset odwrotnie
 		#10;
@@ -77,17 +74,17 @@ module flash_test;
 		RST = 0;
 		
 		#20;
-		NF_A_[7:0] = 8'dx;
-		NF_D_[7:0] = 8'dx;
+//		NF_A[7:0] = 8'dx;
+//		NF_D[7:0] = 8'dx;
 		#40;
-		addr_[7:0] = 8'b00110101;
-		data_[7:0] = 8'b11001001;
-		direction_rw = 1'b1; //read
+		addr[7:0] = 8'b00110101;
+		data[7:0] = 8'b11001001;
+		direction_rw = 1'b0; //write
 		#40;
-		fb_start_ = 1;
+		fb_start = 1;
 		
-		#100;
-		fb_done_ = 1;
+		//#100;
+		//fb_done = 1;
 	end
 	
 endmodule

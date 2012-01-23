@@ -28,16 +28,49 @@ input [7:0] RS_DATAOUT;
 output reg RS_TRG_READ, RS_TRG_WRITE;
 input RS_DONE;
 
-inout [7:0] FL_DATA;
+output reg [7:0] FL_DATA;
 output reg [7:0] FL_ADDR = 8'b11001100; 
-output FL_TRG;
+output reg FL_TRG;
 input FL_STATUS;
-output FL_FLOW;
+output reg FL_FLOW;
 
 reg [7:0] data;
+wire [2:0] fsm_state;
+	
+localparam [2:0]		IDLE = 3'd0,
+							WAITING_RS = 3'd1,
+							READING_RS = 3'd2,
+							WRITING_FL = 3'd3,
+							WAITING_FL = 3'd4,
+							STOP = 3'd5;
 	
 manager_fsm fsm(	.CLK_50MHZ(CLK_50MHZ), .RST(RST),
-						.RS_DONE(RS_DONE)
-					);					
+						.RS_DONE(RS_DONE), .state(fsm_state),
+						.FL_STATUS(FL_STATUS)
+					);		
+
+always @* begin
+	if( RST ) FL_FLOW = 1;
+	
+	RS_DATAIN = 8'bx;
+	RS_TRG_READ = 1'bx;
+	RS_TRG_WRITE = 1'bx;
+	FL_TRG = 0;
+	
+	case( fsm_state )
+		WAITING_RS: begin
+			FL_DATA = RS_DATAOUT;
+		end
+		
+		WRITING_FL: begin
+			FL_FLOW = 0;
+			FL_TRG = 1;
+		end
+		
+		STOP: begin
+			FL_TRG = 0;
+		end
+	endcase
+end					
 
 endmodule

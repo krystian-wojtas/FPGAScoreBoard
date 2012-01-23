@@ -34,8 +34,6 @@ reg [2:0] state, next;
 		
 	always @(posedge CLK_50MHZ) begin
 		if(RST) begin
-			done <= 0;
-			next_cnt <= 0;
 			state <= IDLE;
 		end else begin
 			state <= next;
@@ -49,6 +47,8 @@ reg [2:0] state, next;
 		
 		case(state) 
 			IDLE: begin
+				done <= 0;
+				next_cnt <= 0;
 				if(start)	next <= COUNTING;
 				else 			next <= IDLE;
 				next_cnt <= 0;				

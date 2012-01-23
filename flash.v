@@ -79,10 +79,6 @@ module Flash( //rename FlashBridge?
 	always @(posedge CLK_50MHZ)
 	begin
 		if(RST) begin
-			//NF_RP = 1'b1; // czy 1
-			NF_CE = 1'b1; //wylaczenie ukladu
-			NF_WE = 1'b1; //wylaczenie zapisu
-			NF_OE = 1'b1; //wylaczenie odczytu
 			NF_BYTE=1'b0; //8bit data
 			NF_WP=1'b0; //Protect two outermost Flash boot blocks against all program and erase operations.
 			NF_RP=1;
@@ -99,28 +95,23 @@ module Flash( //rename FlashBridge?
 
 	always @*
 	begin
-		if(RST) begin
-			fb_done = 0;
-			ft_start = 0;
-		end else	begin
-			next_state = 3'dx;
-			case(state)
-				IDLE:
-					if(fb_start == 1'b1) //uklad nadrzedny nakazal wykonanie akcji
-						next_state = RW;
-					else
-						next_state = IDLE;
-				RW: 			
-					next_state = WAITING;
-				WAITING:
-					if(ft_done)
-						next_state = DONE;
-					else
-						next_state = WAITING;
-				DONE:
+		next_state = 3'dx;
+		case(state)
+			IDLE:
+				if(fb_start == 1'b1) //uklad nadrzedny nakazal wykonanie akcji
+					next_state = RW;
+				else
 					next_state = IDLE;
-			endcase
-		end
+			RW: 			
+				next_state = WAITING;
+			WAITING:
+				if(ft_done)
+					next_state = DONE;
+				else
+					next_state = WAITING;
+			DONE:
+				next_state = IDLE;
+		endcase
 	end
 	
 	
@@ -128,9 +119,9 @@ module Flash( //rename FlashBridge?
 	begin
 		case(state)
 			IDLE: begin
-				NF_CE <= 1'b1;
-				NF_OE <= 1'b1;
-				NF_WE <= 1'b1;
+				NF_CE <= 1'b1; //wylaczenie ukladu
+				NF_WE <= 1'b1; //wylaczenie zapisu
+				NF_OE <= 1'b1; //wylaczenie odczytu
 				ft_start <= 1'b0;
 				fb_done <= 1'b0;
 			end

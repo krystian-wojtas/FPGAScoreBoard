@@ -22,7 +22,7 @@ module UART(
 				input RST,
 				input CLK_50MHZ,
 				output TX,
-				output RX,
+				input RX,
 				input FLOW,						// REMEMBERED "FLOW" WHILE RESETING
 				input [7:0] DATA_IN,
 				output [7:0] DATA_OUT,

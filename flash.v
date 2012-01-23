@@ -49,7 +49,7 @@ module Flash( //rename FlashBridge?
 	reg direction_rw_;
 //	reg fb_action_;
 //	reg ft_action_;
-	assign direction_rw = direction_rw_;
+//	assign direction_rw = direction_rw_;
 //	assign fb_action = fb_action_;
 //	assign ft_action = ft_action_;
 

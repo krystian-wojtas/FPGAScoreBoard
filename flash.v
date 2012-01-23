@@ -85,7 +85,10 @@ module Flash( //rename FlashBridge?
 			NF_OE = 1'b1; //wylaczenie odczytu
 			NF_BYTE=1'b0; //8bit data
 			NF_WP=1'b0; //Protect two outermost Flash boot blocks against all program and erase operations.
+			NF_RP=1;
 		end
+		else
+			NF_RP=0;
 	end
 	
 	always @(posedge CLK_50MHZ)

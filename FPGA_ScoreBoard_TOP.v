@@ -49,7 +49,7 @@ Flash fl( 	.CLK_50MHZ(CLK_50MHZ), .RST(BTN_WEST),
 				.addr(FL_ADDR), .data(FL_DATA),
 				.fb_start(FL_TRG),.fb_done(FL_STATUS), .direction_rw(FL_FLOW),
 				.NF_A(NF_A), .NF_D(NF_D),
-				.NF_CE(NF_CE), .NF_BYTE(NF_BYTE), .NF_OE(NF_OE), .NF_RP(NF_RP), .NF_WE(NF_WE), .NF_WP(NF_WP),
+				.NF_CE(NF_CE), .NF_BYTE(NF_BYTE), .NF_OE(NF_OE), .NF_WE(NF_WE), .NF_WP(NF_WP),
 				.NF_STS(NF_STS)
 			);
 

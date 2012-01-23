@@ -79,6 +79,8 @@ module flash_test;
 		direction_rw = 1'b0; //write
 		#40;
 		fb_start = 1;
+		#20;
+		fb_start = 0;
 	end
 	
 endmodule

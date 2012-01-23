@@ -46,7 +46,7 @@ module Flash( //rename FlashBridge?
 //	assign NF_WE = NF_WE_;
 //	assign NF_OE = NF_OE_;
 		
-	reg direction_rw_;
+//	reg direction_rw_;
 //	reg fb_action_;
 //	reg ft_action_;
 //	assign direction_rw = direction_rw_;
@@ -68,13 +68,13 @@ module Flash( //rename FlashBridge?
 	wire ft_done;
 	FlashTimer fl_timer(.CLK_50MHZ(CLK_50MHZ), .RST(RST), .start(ft_start), .done(ft_done));
 
-	localparam 	STATE_A = 3'd0,
-			STATE_B = 3'd1,
-			STATE_C = 3'd2,
-			STATE_D = 3'd3;
+	localparam 	IDLE = 3'd0,
+			RW = 3'd1,
+			WAITING = 3'd2,
+			DONE = 3'd3;
 
-	reg [2:0] state = STATE_A;
-	reg [2:0] next_state = STATE_A;
+	reg [2:0] state;
+	reg [2:0] next_state;
 
 	always @(posedge CLK_50MHZ)
 	begin
@@ -85,72 +85,67 @@ module Flash( //rename FlashBridge?
 			NF_OE = 1'b1; //wylaczenie odczytu
 			NF_BYTE=1'b0; //8bit data
 			NF_WP=1'b0; //Protect two outermost Flash boot blocks against all program and erase operations.
-
-			state <= STATE_A;
 		end
-		state <= next_state;
 	end
-
+	
 	always @(posedge CLK_50MHZ)
+		if(RST) 
+			state <= IDLE;
+		else
+			state <= next_state;
+
+	always @*
 	begin
 		if(RST) begin
 			fb_done = 0;
 			ft_start = 0;
-		end else if(fb_start == 1'b1) //uklad nadrzedny nakazal wykonanie akcji
-		begin
-			if(direction_rw == 1'b1) // kierunek: odczyt
-			begin
-				case(state)
-				STATE_A: begin
-						NF_CE <= 1'b0;
-						NF_OE <= 1'b0;
-						ft_start <= 1'b1;
-						fb_done <= 1'b0;
-						next_state <= STATE_B;
-					end
-				STATE_B: begin
-						if(ft_done == 1) begin
-							next_state <= STATE_C;
-						end
-						else begin //czy konieczne?
-							next_state <= STATE_B;
-						end
-					end
-				STATE_C: begin
-						NF_CE <= 1'b1;
-						NF_OE <= 1'b1;
-						next_state <= STATE_A;
-						ft_start <= 0; // odczyt ukonczony
-						fb_done <= 1;
-					end
-				endcase
-			end
-			else
-			begin
-				case(state)
-				STATE_A: begin
-						NF_CE <= 1'b0;
-						NF_OE <= 1'b1;
-						NF_WE <= 1'b0;
-						next_state <= STATE_B;
-						ft_start <= 1'b1;
-						fb_done <= 1'b0;
-					end
-				STATE_B: begin
-						if(ft_done == 1) begin
-							next_state <= STATE_C;
-						end
-					end
-				STATE_C: begin
-						NF_CE <= 1'b1;
-						NF_WE <= 1'b1;
-						next_state <= STATE_A;
-						ft_start <= 0;
-						fb_done <= 1;
-					end
-				endcase
-			end
+		end else	begin
+			next_state = 3'dx;
+			case(state)
+				IDLE:
+					if(fb_start == 1'b1) //uklad nadrzedny nakazal wykonanie akcji
+						next_state = RW;
+					else
+						next_state = IDLE;
+				RW: 			
+					next_state = WAITING;
+				WAITING:
+					if(ft_done)
+						next_state = DONE;
+					else
+						next_state = WAITING;
+				DONE:
+					next_state = IDLE;
+			endcase
 		end
 	end
+	
+	
+	always @*
+	begin
+		case(state)
+			IDLE: begin
+				NF_CE <= 1'b1;
+				NF_OE <= 1'b1;
+				ft_start <= 1'b0;
+				fb_done <= 1'b0;
+			end
+			RW: begin
+				if(direction_rw) begin
+					NF_CE <= 1'b0;
+					NF_OE <= 1'b0;
+					ft_start <= 1'b1;
+				end
+				else begin
+					NF_CE <= 1'b0;
+					NF_WE <= 1'b0;
+					ft_start <= 1'b1;
+				end
+			end
+			DONE:
+				fb_done <= 1;
+		endcase
+	end
+	
 
 endmodule

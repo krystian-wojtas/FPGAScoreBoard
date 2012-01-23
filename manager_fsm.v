@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module manager_fsm( CLK_50MHZ, RST, RS_DONE, FL_STATUS );
+module manager_fsm( CLK_50MHZ, RST, RS_DONE, FL_STATUS, state );
 output state;
 input RST, CLK_50MHZ;
 input RS_DONE;
@@ -73,7 +73,7 @@ always @* begin
 					next = WRITING_FL;
 		end
 		
-		WRIGING_FL: begin
+		WRITING_FL: begin
 					next = WAITING_FL;		
 		end
 		
@@ -85,7 +85,7 @@ always @* begin
 		STOP: begin
 				next = STOP;
 		end
-	
+	endcase
 end
 
 endmodule

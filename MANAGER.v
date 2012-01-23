@@ -29,7 +29,7 @@ output reg RS_TRG_READ, RS_TRG_WRITE;
 input RS_DONE;
 
 inout [7:0] FL_DATA;
-output reg [7:0] FL_ADDR; 
+output reg [7:0] FL_ADDR = 8'b11001100; 
 output FL_TRG;
 input FL_STATUS;
 output FL_FLOW;
@@ -37,10 +37,7 @@ output FL_FLOW;
 reg [7:0] data;
 	
 manager_fsm fsm(	.CLK_50MHZ(CLK_50MHZ), .RST(RST),
-						.RS_DONE(RS_DONE), .RS_DATAOUT(RS_DATAOUT)
-						.FL_DATA(FL_DATA), .FL_TRG(FL_TRG), .FL_STATUS(FL_STATUS)
-					);										
-
-assign FL_ADDR = 8'b11001100;
+						.RS_DONE(RS_DONE)
+					);					
 
 endmodule

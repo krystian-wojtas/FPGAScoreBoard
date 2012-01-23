@@ -66,21 +66,24 @@ module flash_test;
 	
 	initial
 	begin	
-		#10;
+		#50;
 		RST = 0; //TODO reset odwrotnie
-		#10;
+		#50;
 		RST = 1;
-		#10;
+		#50;
 		RST = 0;
 		
-		#40;
+		#50;
 		addr[7:0] = 8'b00110101;
 		data[7:0] = 8'b11001001;
 		direction_rw = 1'b0; //write
-		#40;
+		#50;
 		fb_start = 1;
-		#20;
-		fb_start = 0;
+		//#20;
+		//fb_start = 0;
 	end
+	
+	always @(posedge fb_done)
+		fb_start = 0;
 	
 endmodule

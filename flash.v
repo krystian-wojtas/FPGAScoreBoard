@@ -127,6 +127,7 @@ module Flash( //rename FlashBridge?
 			IDLE: begin
 				NF_CE <= 1'b1;
 				NF_OE <= 1'b1;
+				NF_WE <= 1'b1;
 				ft_start <= 1'b0;
 				fb_done <= 1'b0;
 			end
@@ -142,6 +143,8 @@ module Flash( //rename FlashBridge?
 					ft_start <= 1'b1;
 				end
 			end
+			WAITING:
+				ft_start <= 0;
 			DONE:
 				fb_done <= 1;
 		endcase

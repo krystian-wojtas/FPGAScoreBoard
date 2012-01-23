@@ -27,7 +27,7 @@ module clock(
 	/*** SIMULATION CLK 50 MHZ ***/
 	always
 	begin
-		#1;
+		#10;
 		CLK_50MHZ = ~CLK_50MHZ;
 	end
 

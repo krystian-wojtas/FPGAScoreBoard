@@ -50,6 +50,13 @@ module FPGA_ScoreBoard_TOP_test(
 				.NF_STS(NF_STS)
 	 );
 	 
+	flash_sim fl_sim(
+		.NF_A(NF_A),
+		.NF_D(NF_D), //TODO inout
+		.NF_CE(NF_CE), .NF_BYTE(NF_BYTE), .NF_OE(NF_OE), .NF_RP(NF_RP), .NF_WE(NF_WE), .NF_WP(NF_WP),
+		.NF_STS(NF_STS)
+	 );
+	 
 	 initial
 	 begin
 			RST = 0;

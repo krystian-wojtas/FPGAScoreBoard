@@ -42,3 +42,4 @@ xst
 *.html
 *.xml
 *.txt
+netgen/*

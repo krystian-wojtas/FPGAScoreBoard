@@ -68,6 +68,37 @@ module flash_test;
 		.NF_CE(NF_CE), .NF_BYTE(NF_BYTE), .NF_OE(NF_OE), .NF_RP(NF_RP), .NF_WE(NF_WE), .NF_WP(NF_WP),
 		.NF_STS(NF_STS)
 	 );
+	 
+	task flash_read(
+		input reg [7:0] addr2,
+		input reg [7:0] data2
+	);
+	begin
+		addr[7:0] = addr2;
+		data[7:0] = data2;
+		direction_rw = 1'b1;
+		#50;
+		fb_start = 1;
+		@(negedge CLK_50MHZ) fb_start = 0;
+	end
+	endtask
+	 
+	task flash_write(
+		input reg [7:0] addr2,
+		input reg [7:0] data2
+	);
+	begin
+		addr[7:0] = addr2;
+		data[7:0] = data2;
+		direction_rw = 1'b0;
+		#50;
+		fb_start = 1;
+		@(negedge CLK_50MHZ) fb_start = 0;
+	end
+	endtask
+		
+	reg [7:0] addr3;
+	reg [7:0] data3;
 	
 	initial
 	begin	
@@ -77,77 +108,34 @@ module flash_test;
 		RST = 1;
 		#50;
 		RST = 0;
-		
-		//TODO task
-		//zapis 1
 		#50;
-		addr[7:0] = 8'd0;
-		data[7:0] = 8'b11001001;
-		direction_rw = 1'b0;
-		#50;
-		fb_start = 1;
-		@(negedge CLK_50MHZ) fb_start = 0;
 		
-		//zapis 2
-		@(negedge fb_done);
-		@(negedge CLK_50MHZ);
-		@(negedge CLK_50MHZ);
-		addr[7:0] = 8'd1;
-		data[7:0] = 8'b00001101;
-		direction_rw = 1'b0;
-		#50;
-		fb_start = 1;
-		@(negedge CLK_50MHZ) fb_start = 0;
+		$display("$time [FLASH] test zapisu", $time);
+		addr3 = 0;
+		data3 = 1;
+		repeat( 7 ) 
+		begin 
+			addr3 = addr3 + 1;
+			data3 = data3 << 1'b1;
+			flash_write(addr3, data3);
+			@(negedge fb_done);
+			@(negedge CLK_50MHZ);
+			@(negedge CLK_50MHZ);
+		end 
 		
-		
-		//odczyt 1
-		@(negedge fb_done);
-		@(negedge CLK_50MHZ);
-		@(negedge CLK_50MHZ);
-		addr[7:0] = 8'd0;
-		data[7:0] = 8'd0;
-		direction_rw = 1'b1;
-		#50;
-		fb_start = 1;
-		@(negedge CLK_50MHZ) fb_start = 0;
-		
-		
-		//odczyt 2
-		@(negedge fb_done);
-		@(negedge CLK_50MHZ);
-		@(negedge CLK_50MHZ);
-		addr[7:0] = 8'd1;
-		data[7:0] = 8'd0;
-		direction_rw = 1'b1;
-		#50;
-		fb_start = 1;
-		@(negedge CLK_50MHZ) fb_start = 0;
-		
-		
-		
-		//zapis 3
-		@(negedge fb_done);
-		@(negedge CLK_50MHZ);
-		@(negedge CLK_50MHZ);
-		addr[7:0] = 8'd2;
-		data[7:0] = 8'b01101101;
-		direction_rw = 1'b0;
-		#50;
-		fb_start = 1;
-		@(negedge CLK_50MHZ) fb_start = 0;
-		
-		
-		//odczyt 3
-		@(negedge fb_done);
-		@(negedge CLK_50MHZ);
-		@(negedge CLK_50MHZ);
-		addr[7:0] = 8'd2;
-		data[7:0] = 8'd0;
-		direction_rw = 1'b1;
-		#50;
-		fb_start = 1;
-		@(negedge CLK_50MHZ) fb_start = 0;
-		
+		$display("$time [FLASH] test odczytu", $time);
+		addr3 = 0;
+		data3 = 1;
+		repeat( 7 ) 
+		begin 
+			addr3 = addr3 + 1;
+			data3 = data3 << 1'b1;
+			flash_read(addr3, data3);
+			@(negedge fb_done);
+			@(negedge CLK_50MHZ);
+			@(negedge CLK_50MHZ);
+		end 
+	
 	end
 	
 	//always @(posedge fb_done)

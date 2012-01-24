@@ -18,14 +18,18 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module Flash_sim(
+module Flash_sim
+	#(parameter DEPTH=5)
+	(
 	input [7:0] NF_A,
 	inout [7:0] NF_D,
 	input NF_CE, NF_BYTE, NF_OE, NF_WE, NF_RP, NF_WP,
 	output reg NF_STS
 	);
 	
-	reg [7:0] flash_storage [4:0];
+	localparam N=2**DEPTH;
+	
+	reg [7:0] flash_storage [N-1:0];
 	wire [7:0] NF_D_;
 	reg [7:0] NF_D_driver;
 	wire [7:0] NF_D = NF_D_driver[7:0]; //inout must be driven by a wire

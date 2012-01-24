@@ -26,7 +26,7 @@ module FPGA_ScoreBoard_TOP(
 				output RS232_DCE_TXD, // RS OUTPUT (WRITE)
 				//FLASH
 				output [7:0] NF_A,
-				output [7:0] NF_D, //TODO inout
+				inout [7:0] NF_D, //TODO inout
 				output NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP,
 				input NF_STS
     );

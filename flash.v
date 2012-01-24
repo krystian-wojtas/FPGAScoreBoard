@@ -24,9 +24,9 @@ module Flash( //rename FlashBridge?
 	output reg NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP,
 	input NF_STS,
 	output [7:0] NF_A,
-	output [7:0] NF_D,
+	inout [7:0] NF_D,
 	input [7:0] addr, //do polaczenia z pozostalymi modulami
-	input [7:0] data, //jak wyzej
+	inout [7:0] data, //jak wyzej
 	input direction_rw, //kierunek odczyt lub zapis
 	input fb_start, //podnoszac linie z zew jest wyzwalaczem akcji zapisu lub odczytu; obnizajac z wew informuje ze akcja zostala wykonana
 	output reg fb_done

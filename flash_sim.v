@@ -19,7 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Flash_sim
-	#(parameter DEPTH=5)
+	#(parameter DEPTH=8)
 	(
 	input [7:0] NF_A,
 	inout [7:0] NF_D,
@@ -49,6 +49,7 @@ module Flash_sim
 	always @(negedge NF_WE) begin
 		//deassign NF_D;
 //		flash_storage[NF_A] <= NF_D ;
+		//$display("%t [FLASH2] Zapis pod adres 0x%b bajtu 0x%b", $time, NF_A[7:0], NF_D[7:0]);
 		flash_storage[NF_A][7:0] = NF_D[7:0];
 		$display("%t [FLASH] Zapis pod adres 0x%b bajtu 0x%b", $time, NF_A[7:0], flash_storage[NF_A][7:0]);
 	end

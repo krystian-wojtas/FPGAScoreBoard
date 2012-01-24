@@ -81,7 +81,7 @@ module flash_test;
 		//TODO task
 		//zapis 1
 		#50;
-		addr[7:0] = 8'b00110101;
+		addr[7:0] = 8'd0;
 		data[7:0] = 8'b11001001;
 		direction_rw = 1'b0;
 		#50;
@@ -92,7 +92,7 @@ module flash_test;
 		@(negedge fb_done);
 		@(negedge CLK_50MHZ);
 		@(negedge CLK_50MHZ);
-		addr[7:0] = 8'b11110101;
+		addr[7:0] = 8'd1;
 		data[7:0] = 8'b00001101;
 		direction_rw = 1'b0;
 		#50;
@@ -104,7 +104,44 @@ module flash_test;
 		@(negedge fb_done);
 		@(negedge CLK_50MHZ);
 		@(negedge CLK_50MHZ);
-		addr[7:0] = 8'b00110101;
+		addr[7:0] = 8'd0;
+		data[7:0] = 8'd0;
+		direction_rw = 1'b1;
+		#50;
+		fb_start = 1;
+		@(negedge CLK_50MHZ) fb_start = 0;
+		
+		
+		//odczyt 2
+		@(negedge fb_done);
+		@(negedge CLK_50MHZ);
+		@(negedge CLK_50MHZ);
+		addr[7:0] = 8'd1;
+		data[7:0] = 8'd0;
+		direction_rw = 1'b1;
+		#50;
+		fb_start = 1;
+		@(negedge CLK_50MHZ) fb_start = 0;
+		
+		
+		
+		//zapis 3
+		@(negedge fb_done);
+		@(negedge CLK_50MHZ);
+		@(negedge CLK_50MHZ);
+		addr[7:0] = 8'd2;
+		data[7:0] = 8'b01101101;
+		direction_rw = 1'b0;
+		#50;
+		fb_start = 1;
+		@(negedge CLK_50MHZ) fb_start = 0;
+		
+		
+		//odczyt 3
+		@(negedge fb_done);
+		@(negedge CLK_50MHZ);
+		@(negedge CLK_50MHZ);
+		addr[7:0] = 8'd2;
 		data[7:0] = 8'd0;
 		direction_rw = 1'b1;
 		#50;

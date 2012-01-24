@@ -23,7 +23,8 @@ module FPGA_ScoreBoard_TOP_test(
 	 
 	 wire CLK_50MHZ;
 	 reg RST;
-	 reg RS232_DCE_RXD;
+	 //reg RS232_DCE_RXD;
+	 wire RS232_DCE_RXD;
 	 wire RS232_DCE_TXD;
 	 reg TRG_READ, TRG_WRITE;
 	 reg RS_FLOW;
@@ -57,6 +58,15 @@ module FPGA_ScoreBoard_TOP_test(
 		.NF_STS(NF_STS)
 	 );
 	 
+	 
+	 // RS SIMULATION
+	 rs232_sim rs_sim(
+	 			.CLK_50MHZ(CLK_50MHZ), // MAIN CLOCK
+				.RST(RST), // RESET
+				.TX(RS232_DCE_RXD), // RS INPUT (READ)
+				.RX(RS232_DCE_TXD) // RS OUTPUT (WRITE)		
+	 );
+	 
 	 initial
 	 begin
 			RST = 0;
@@ -69,22 +79,6 @@ module FPGA_ScoreBoard_TOP_test(
 			#100;
 			RST = 0;
 			#1000;
-			
-			DATA_IN = 8'b01010101;
-			TRG_WRITE = 1;
-			#100;
-			TRG_WRITE = 0;
-			
-			
 	 end
-	 
-	 /*** INPUT DATA SIMULATION ***/
-always @( posedge CLK_50MHZ )
-	begin
-	if( rx_cnt ) rx_cnt <= rx_cnt - 1;
-	else rx_cnt = 100;
-	if( rx_cnt == 1 )	RS232_DCE_RXD = $random % 2;
-	end
-
 
 endmodule

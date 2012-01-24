@@ -31,7 +31,9 @@ reg TRG_WRITE;
 reg [7:0] DATA_IN;
 wire [7:0] DATA_OUT;
 reg FLOW;
-reg [7:0] LAST_RECEIVED;
+//reg [7:0] LAST_RECEIVED;
+
+reg [7:0] send_buff;
 
 	
 UART u( 
@@ -52,17 +54,30 @@ initial begin
 	FLOW = 1;
 	TRG_READ = 0;
 	TRG_WRITE = 0;
-
+	send_buff = 8'b00000011;
+	
 	$display("%t [RS232] Initialized.", $time);
 	$display("%t [RS232] Waiting before write.", $time);
 	@(negedge RST) #10000;
 	
-	DATA_IN = 8'b00000011;
-	$display("%t [RS232] Writing '%b' - START.", $time, DATA_IN);	
-	TRG_WRITE = 1;
-	#100;
-	TRG_WRITE = 0;
-	$display("%t [RS232] Writing '%b' - DONE.", $time, DATA_IN);	
+	repeat(2) begin
+		write( send_buff );
+		send_buff = send_buff <<< 1;
+	end
+	
 end
+
+
+
+task write ( input [7:0] data	);
+	begin
+		DATA_IN = data;
+		$display("%t [RS232] Writing '%b' - START.", $time, DATA_IN);	
+		TRG_WRITE = 1;
+		#100;
+		TRG_WRITE = 0;
+		$display("%t [RS232] Writing '%b' - DONE.", $time, DATA_IN);
+	end
+endtask
 
 endmodule

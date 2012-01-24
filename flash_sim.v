@@ -18,13 +18,19 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module flash_sim(
+module Flash_sim(
 	input [7:0] NF_A,
 	input [7:0] NF_D,  //TODO inout
 	input NF_CE, NF_BYTE, NF_OE, NF_WE, NF_RP, NF_WP,
 	output reg NF_STS
 	);
 
-	
+	always @(negedge NF_WE) begin
+		$display("%t [FLASH] Zapis pod adres 0x%b bajtu 0x%b", $time, NF_A[7:0], NF_D[7:0]);
+	end
+
+	always @(negedge NF_OE) begin
+		$display("%t [FLASH] Odczyt z adresu 0x%b bajtu 0x%b", $time, NF_A[7:0], NF_D[7:0]);
+	end
 
 endmodule

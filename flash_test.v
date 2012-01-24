@@ -62,7 +62,12 @@ module flash_test;
 	
 	clock clk(CLK_50MHZ);
 	Flash fl(RST, CLK_50MHZ, NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP, NF_STS, NF_A[7:0], NF_D[7:0], addr[7:0], data[7:0], direction_rw, fb_start, fb_done);
-
+	Flash_sim fl_sim(
+		.NF_A(NF_A),
+		.NF_D(NF_D), //TODO inout
+		.NF_CE(NF_CE), .NF_BYTE(NF_BYTE), .NF_OE(NF_OE), .NF_RP(NF_RP), .NF_WE(NF_WE), .NF_WP(NF_WP),
+		.NF_STS(NF_STS)
+	 );
 	
 	initial
 	begin	
@@ -73,17 +78,42 @@ module flash_test;
 		#50;
 		RST = 0;
 		
+		//TODO task
+		//zapis 1
 		#50;
 		addr[7:0] = 8'b00110101;
 		data[7:0] = 8'b11001001;
-		direction_rw = 1'b0; //write
+		direction_rw = 1'b0;
 		#50;
 		fb_start = 1;
-		//#20;
-		//fb_start = 0;
+		@(negedge CLK_50MHZ) fb_start = 0;
+		
+		//zapis 2
+		@(negedge fb_done);
+		@(negedge CLK_50MHZ);
+		@(negedge CLK_50MHZ);
+		addr[7:0] = 8'b11110101;
+		data[7:0] = 8'b00001101;
+		direction_rw = 1'b0;
+		#50;
+		fb_start = 1;
+		@(negedge CLK_50MHZ) fb_start = 0;
+		
+		
+		//odczyt 1
+		@(negedge fb_done);
+		@(negedge CLK_50MHZ);
+		@(negedge CLK_50MHZ);
+		addr[7:0] = 8'b00110101;
+		data[7:0] = 8'd0;
+		direction_rw = 1'b1;
+		#50;
+		fb_start = 1;
+		@(negedge CLK_50MHZ) fb_start = 0;
+		
 	end
 	
-	always @(posedge fb_done)
-		fb_start = 0;
+	//always @(posedge fb_done)
+	//	fb_start = 0;
 	
 endmodule

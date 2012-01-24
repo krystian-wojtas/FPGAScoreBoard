@@ -83,7 +83,7 @@ always @* begin
 		end
 		
 		STOP: begin
-				next = STOP;
+				next = IDLE;
 		end
 	endcase
 end

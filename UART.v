@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+//`timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 		A. Janusz
@@ -52,7 +52,7 @@ SERIAL_RX_FIFO #(.DEPTH(2))
 							.DATA(DATA_OUT)
 						);
 						
-SERIAL_TX_FIFO #(.DEPTH(1))
+SERIAL_TX_FIFO #(.DEPTH(2))
 					mod_tx( 	.CLK_TX(CLK_TX),
 							.RST(~MOD_RST),
 							.CLK_WR(CLK_50MHZ),

@@ -74,11 +74,7 @@ initial begin
 	$display("%t [RS232] Initialized.", $time);
 	$display("%t [RS232] Waiting before write.", $time);
 	@(negedge RST) #10000;
-	
-	write( 8'd0 ); #10;
-	write( 8'b00001110 ); #10;
-	write( send_buff ); #10;
-	
+		
 	/*
 	repeat(3) begin
 		write( send_buff );
@@ -86,6 +82,9 @@ initial begin
 		#10;
 	end
 	*/
+	
+	write( 8'd0, 8'b00011000, 8'b00000011 ); #1000000;
+	write( 8'd1, 8'b00011000, 8'b11111111 ); #1000000;
 	
 end
 
@@ -111,14 +110,31 @@ always @(posedge CLK_50MHZ) begin
 	end
 end
 
-task write ( input [7:0] data	);
+task write ( input [7:0] flow, input [7:0] addr, input [7:0] data	);
 	begin
-		DATA_IN = data;
-		$display("%t [RS232] Writing '%b' - START.", $time, DATA_IN);	
+		/*
+		write( 8'd0 ); #10;
+		write( 8'b00001110 ); #10;
+		write( send_buff ); #10;
+		*/
+	
+		DATA_IN = flow;			
 		TRG_WRITE = 1;
 		@(posedge CLK_50MHZ) #1;
-		TRG_WRITE = 0;
-		$display("%t [RS232] Writing '%b' - DONE.", $time, DATA_IN);
+		TRG_WRITE = 0; #10;
+		
+		DATA_IN = addr;			
+		TRG_WRITE = 1;
+		@(posedge CLK_50MHZ) #1;
+		TRG_WRITE = 0; #10;
+		
+		DATA_IN = data;			
+		TRG_WRITE = 1;
+		@(posedge CLK_50MHZ) #1;
+		TRG_WRITE = 0; #10;
+		
+		if( flow[0] == 0 ) $display("%t [RS232] Writing '%b' to '%b'.", $time, data, addr);
+		else 			       $display("%t [RS232] Reading from '%b'.", $time, addr);
 	end
 endtask
 

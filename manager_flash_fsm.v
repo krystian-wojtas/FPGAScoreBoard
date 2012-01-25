@@ -27,6 +27,8 @@ module Manager_Flash_FSM(
 	output reg [7:0] FL_DATA,
 	input [7:0] addr_rx,
 	input [7:0] data_rx,
+	output reg [7:0] addr_tx,
+	output reg [7:0] data_tx,
 	output reg fb_start,
 	input fb_done,
 	input fl_trg,
@@ -40,7 +42,8 @@ module Manager_Flash_FSM(
 	localparam [2:0]	IDLE = 3'd0,
 							FL_WAITING_TRIG = 3'd1,
 							FL_RW = 3'd2,
-							FL_WAITING_RW = 3'd3;
+							FL_WAITING_RW = 3'd3,
+							FL_DONE = 3'd4;
 	
 	always @(posedge CLK_50MHZ) begin
 		if(RST) state_fl <= IDLE;
@@ -53,7 +56,9 @@ module Manager_Flash_FSM(
 				FL_RW:
 					state_fl <= FL_WAITING_RW;
 				FL_WAITING_RW:
-					if(fb_done) state_fl <= FL_WAITING_TRIG;
+					if(fb_done) state_fl <= FL_DONE;
+				FL_DONE:
+					state_fl <= IDLE;
 			endcase
 		end
 	end
@@ -70,11 +75,14 @@ module Manager_Flash_FSM(
 				FL_ADDR = addr_rx;
 				FL_DATA = data_rx;
 				fb_start = 1;
-				tx_trig = 1'b1; //TODO nastepny takt
 			end
 			FL_WAITING_RW: begin
 				fb_start = 0;
-				tx_trig = 1'b0;
+			end
+			FL_DONE: begin
+				addr_tx = addr_rx;
+				data_tx = data_rx;
+				tx_trig = 1'b1; //TODO nastepny takt
 			end
 		endcase
 	end

@@ -61,7 +61,13 @@ module flash_test;
 	
 	
 	clock clk(CLK_50MHZ);
-	Flash fl(RST, CLK_50MHZ, NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP, NF_STS, NF_A[7:0], NF_D[7:0], addr[7:0], data[7:0], direction_rw, fb_start, fb_done);
+	Flash fl(RST, CLK_50MHZ, NF_CE, NF_BYTE,
+	NF_OE, NF_RP, NF_WE, NF_WP, NF_STS, 
+	NF_A[7:0],
+	NF_D[7:0],
+	addr[7:0],
+	data[7:0], 
+	direction_rw, fb_start, fb_done);
 	Flash_sim fl_sim(
 		.NF_A(NF_A),
 		.NF_D(NF_D), //TODO inout

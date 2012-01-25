@@ -22,178 +22,63 @@ module MANAGER( CLK_50MHZ, RST, RS_FLOW, RS_DATAIN, RS_DATAOUT, RS_TRG_READ, RS_
 						RS_DONE, FL_DATA, FL_ADDR, FL_TRG, FL_STATUS, FL_FLOW );
 input CLK_50MHZ;
 input RST;
-output reg RS_FLOW;
-output reg [7:0] RS_DATAIN;
+output reg RS_FLOW; //TODO del
+output [7:0] RS_DATAIN;
 input [7:0] RS_DATAOUT;
-output reg RS_TRG_READ, RS_TRG_WRITE;
+input RS_TRG_READ;
+output RS_TRG_WRITE;
 input RS_DONE;
 
-output reg [7:0] FL_DATA;
-output reg [7:0] FL_ADDR = 8'b11001100; 
-output reg FL_TRG;
+output [7:0] FL_DATA;
+output [7:0] FL_ADDR; 
+output FL_TRG;
 input FL_STATUS;
-output reg FL_FLOW;
+output FL_FLOW;
 
-reg [7:0] data;
-wire [3:0] state_rx, state_fl, state_tx;
-	
-localparam [3:0]		IDLE = 4'd0,
-							RX_WAITING_CMD = 4'd1,
-							RX_READING_CMD = 4'd2,
-							RX_WAITING_ADDR = 4'd3,
-							RX_READING_ADDR = 4'd4,
-							RX_WAITING_DATA = 4'd5,
-							RX_READING_DATA = 4'd6,
-							FL_RW = 4'd9,
-							FL_WAITING = 4'd10,
-							TX_WRITING_DATA = 4'd11,
-							TX_WAITING_DATA = 4'd12;
-							
-reg [7:0] cmd_rx;
-reg [7:0] addr_rx, addr_tx;
-reg [7:0] data_rx, data_tx;
+//reg [7:0] data;
 
-reg fl_trg, tx_trg;
+wire [7:0] cmd_rx;
+wire [7:0] addr_rx, addr_tx;
+wire [7:0] data_rx, data_tx;
+wire fl_trg, tx_trig;
 
+Manager_RX_FSM m_rx_fsm(
+	CLK_50MHZ,
+	RST,
+	RS_DATAOUT,
+	RS_DONE,
+	fl_trg,
+	cmd_rx,
+	addr_rx,
+	data_rx,
+	addr_tx,
+	data_tx
+);
 
-always @(posedge CLK_50MHZ) begin
-	if(RST) state_rx <= IDLE;
-	else begin
-		case (state_rx)
-			IDLE: begin
-				state_rx <= RX_WAITING_CMD;
-			end
-			RX_WAITING_CMD: begin
-				if( RS_DONE ) begin
-					state_rx <= RX_READING_CMD;
-				end
-			end
-			RX_READING_CMD: begin
-				state_rx <= RX_WAITING_ADDR;
-			end
-			RX_WAITING_ADDR: begin
-				if( RS_DONE ) begin
-					state_rx <= RX_READING_ADDR;
-				end
-			end
-			RX_READING_ADDR: begin
-				state_rx <= RX_WAITING_DATA;
-			end
-			RX_WAITING_DATA: begin
-				if( RS_DONE ) begin
-					state_rx <= RX_READING_DATA;
-				end
-			end
-			RX_READING_DATA: begin
-				state_rx <= RX_WAITING_CMD;
-			end
-		endcase
-	end
-end
+Manager_Flash_FSM m_flash_fsm(
+	.CLK_50MHZ(CLK_50MHZ),
+	.RST(RST),
+	.cmd_rx(cmd_rx),
+	.FL_FLOW(FL_FLOW),
+	.FL_ADDR(FL_ADDR),
+	.FL_DATA(FL_DATA),
+	.addr_rx(addr_rx),
+	.data_rx(data_rx),
+	.fb_start(FL_TRG),
+	.fb_done(FL_STATUS),
+	.fl_trg(fl_trg),
+	.tx_trig(tx_trig)
+);
 
-
-always @* begin	
-	case( state_rx )
-		IDLE: begin
-			fl_trg = 1'b0;
-			tx_trg = 1'b0;
-		end
-		RX_READING_CMD: begin
-			fl_trg = 1'b0;
-			cmd_rx = RS_DATAOUT;
-		end
-		RX_READING_ADDR: begin
-			addr_rx = RS_DATAOUT;
-		end
-		RX_READING_DATA: begin
-			fl_trg = 1'b1;
-			data_rx = RS_DATAOUT;
-			addr_tx = addr_rx;
-			data_tx = data_rx;
-		end
-	endcase
-end
-
-
-always @(posedge CLK_50MHZ) begin
-	if(RST) state_fl <= IDLE;
-	else begin
-		case (state_fl)
-			IDLE:
-				state_fl <= FL_WAITING_TRIG;
-			FL_WAITING_TRIG:
-				if(fl_trg) state_fl <= FL_RW;
-			FL_RW:
-				state_fl <= FL_WAITING_RW;
-			FL_WAITING_RW:
-				if(FL_STATUS) state_fl <= FL_WAITING_TRIG;
-		endcase
-	end
-end
-
-
-always @* begin	
-	case( state_fl )
-		IDLE: begin
-			FL_TRG = 1'b0;
-			tx_trig = 1'b0;
-		end
-		FL_RW: begin
-			FL_FLOW = cmd_rx[0];
-			FL_ADDR = addr_rx;
-			FL_DATA = data_rx;
-			FL_TRG = 1;
-			tx_trig = 1'b1;
-		end
-		FL_WAITING_RW: begin
-			FL_TRG = 0;
-			tx_trig = 1'b0;
-		end
-	endcase
-end
-
-
-always @(posedge CLK_50MHZ) begin
-	if(RST) state_tx <= IDLE; // przebieg jalowy dla ustalenia sie state_tx w procesie flasha stanu idle
-	else begin
-		case (state_tx)
-			IDLE: begin
-				state_tx <= TX_WAITING_TRIG;
-			end
-			TX_WAITING_TRIG:
-				if( tx_trig )
-					state_tx <= TX_WRITING_ADDR;
-			TX_WRITING_ADDR:
-				state_tx <= TX_WRITING_ADDR_TRG;
-			TX_WRITING_ADDR_TRG:
-				state_tx <= TX_WAITING_DATA;				
-			TX_WAITING_DATA:
-					state_tx <= TX_WRITING_ADDR_TRG;
-			TX_WRITING_ADDR_TRG:
-				state_tx <= TX_WAITING_TRIG;
-		endcase
-	end
-end
-
-
-always @* begin	
-	case( state_tx )
-		IDLE:
-			RS_TRG_WRITE = 1'b0;
-		TX_WRITING_ADDR: begin
-			RS_DATAIN = addr_tx;
-			RS_TRG_WRITE = 1'b1;
-		end
-		TX_WRITING_ADDR_TRG:
-			RS_TRG_WRITE = 1'b0;
-		TX_WAITING_DATA: begin
-			RS_DATAIN = data_tx;
-			RS_TRG_WRITE = 1'b1;
-		end
-		TX_WRITING_ADDR_TRG:
-			RS_TRG_WRITE = 1'b0;
-	endcase
-end
+Manager_TX_FSM m_tx_fsm(
+	CLK_50MHZ,
+	RST,
+	tx_trig,
+	addr_tx,
+	data_tx,
+	RS_DATAIN,
+	RS_TRG_WRITE
+);
 
 
 

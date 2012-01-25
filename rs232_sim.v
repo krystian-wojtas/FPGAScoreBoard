@@ -60,7 +60,7 @@ initial begin
 	$display("%t [RS232] Waiting before write.", $time);
 	@(negedge RST) #10000;
 	
-	repeat(2) begin
+	repeat(3) begin
 		write( send_buff );
 		send_buff = send_buff <<< 1;
 		#100000;

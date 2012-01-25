@@ -24,14 +24,21 @@ input RST, CLK_50MHZ;
 input RS_DONE;
 input FL_STATUS;
 
-localparam [2:0]		IDLE = 3'd0,
-							WAITING_RS = 3'd1,
-							READING_RS = 3'd2,
-							WRITING_FL = 3'd3,
-							WAITING_FL = 3'd4,
-							STOP = 3'd5;
+localparam [3:0]		IDLE = 4'd0,
+							RX_WAITING_CMD = 4'd1,
+							RX_READING_CMD = 4'd2,
+							RX_WAITING_ADDR = 4'd3,
+							RX_READING_ADDR = 4'd4,
+							RX_WAITING_DATA = 4'd5,
+							RX_READING_DATA = 4'd6,
+							FL_WRITING = 4'd7,
+							FL_WAITING_W = 4'd8,
+							FL_READING = 4'd9,
+							FL_WAITING_W = 4'd10,
+							TX_WRITING_DATA = 4'd11,
+							TX_WAITING_DATA = 4'd12;
 	
-reg [2:0] state, next;
+reg [3:0] state, next;
 	 
 // WAIT FOR DATA FROM RS
 // WRITE DATA TO FLASH

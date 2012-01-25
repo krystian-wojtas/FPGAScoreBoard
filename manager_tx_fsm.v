@@ -31,10 +31,7 @@ module Manager_TX_FSM(
 	reg [2:0] state_tx; //TODO 2bits
 	localparam [2:0]	IDLE = 3'd0,
 							TX_WAITING_TRIG = 3'd1,
-							TX_WRITING_ADDR = 3'd2,
-							TX_WRITING_ADDR_TRG = 3'd3,
-							TX_WAITING_DATA = 3'd4,
-							TX_WRITING_DATA_TRG = 3'd5;
+							TX_WRITING_DATA = 3'd2;
 
 
 
@@ -47,15 +44,9 @@ module Manager_TX_FSM(
 				end
 				TX_WAITING_TRIG:
 					if( tx_trig )
-						state_tx <= TX_WRITING_ADDR;
-				TX_WRITING_ADDR:
-					state_tx <= TX_WRITING_ADDR_TRG;
-				TX_WRITING_ADDR_TRG:
-					state_tx <= TX_WAITING_DATA;				
-				TX_WAITING_DATA:
-						state_tx <= TX_WRITING_DATA_TRG;
-				TX_WRITING_DATA_TRG:
-					state_tx <= TX_WAITING_TRIG;
+						state_tx <= TX_WRITING_DATA;
+				TX_WRITING_DATA:
+					state_tx <= IDLE;
 			endcase
 		end
 	end
@@ -65,18 +56,10 @@ module Manager_TX_FSM(
 		case( state_tx )
 			IDLE:
 				RS_TRG_WRITE = 1'b0;
-			TX_WRITING_ADDR: begin
+			TX_WRITING_DATA: begin
 				RS_DATAIN = addr_tx;
 				RS_TRG_WRITE = 1'b1;
 			end
-			TX_WRITING_ADDR_TRG:
-				RS_TRG_WRITE = 1'b0;
-			TX_WAITING_DATA: begin
-				RS_DATAIN = data_tx;
-				RS_TRG_WRITE = 1'b1;
-			end
-			TX_WRITING_ADDR_TRG:
-				RS_TRG_WRITE = 1'b0;
 		endcase
 	end
 

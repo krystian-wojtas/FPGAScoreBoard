@@ -63,6 +63,7 @@ initial begin
 	repeat(2) begin
 		write( send_buff );
 		send_buff = send_buff <<< 1;
+		#100000;
 	end
 	
 end

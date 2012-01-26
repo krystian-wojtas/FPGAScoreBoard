@@ -24,7 +24,6 @@ input RX_DONE;
 output state;
 
 localparam [2:0]	IDLE 				 = 3'd0,
-						WAITING_ADDRESS = 3'd1,
 						WAITING_DATA 	 = 3'd2,
 						DONE				 = 3'd3;
 
@@ -38,13 +37,7 @@ end
 always @* begin
 		case( state )
 		IDLE: begin
-					next = WAITING_ADDRESS;
-		end
-		
-		WAITING_ADDRESS: begin
-			if( RX_DONE )
 					next = WAITING_DATA;
-			else 	next = WAITING_ADDRESS;
 		end
 		
 		WAITING_DATA: begin
@@ -54,7 +47,7 @@ always @* begin
 		end
 		
 		DONE: begin
-					next = WAITING_ADDRESS;
+					next = WAITING_DATA;
 		end
 	endcase
 end

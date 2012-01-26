@@ -33,36 +33,12 @@ module Flash( //rename FlashBridge?
 	);
 	
 		assign NF_A[7:0] = addr[7:0]; //TODO czy dziala w obie strony ??
-		assign NF_D[7:0] = data[7:0]; //TODO jak wyzej ??
-	
-//	always @* begin
-//		NF_A[7:0] = addr[7:0]; //TODO czy dziala w obie strony ??
-//		NF_D[7:0] = data[7:0]; //TODO jak wyzej ??
-//	end
-//	reg NF_CE_;
-//	reg NF_WE_;
-//	reg NF_OE_;
-//	assign NF_CE = NF_CE_;
-//	assign NF_WE = NF_WE_;
-//	assign NF_OE = NF_OE_;
 		
-//	reg direction_rw_;
-//	reg fb_action_;
-//	reg ft_action_;
-//	assign direction_rw = direction_rw_;
-//	assign fb_action = fb_action_;
-//	assign ft_action = ft_action_;
-
-//	always @(posedge RST) // czy posedge
-//	begin
-//		//NF_RP = 1'b1; // czy 1
-//		NF_CE = 1'b1; //wylaczenie ukladu
-//		NF_WE = 1'b1; //wylaczenie zapisu
-//		NF_OE = 1'b1; //wylaczenie odczytu
-//		NF_BYTE=1'b0; //8bit data
-//		NF_WP=1'b0; //Protect two outermost Flash boot blocks against all program and erase operations.
-//	end
-
+		reg [7:0] flash_data_buf;
+		reg czy_czytamy_flash;
+		reg czy_czytamy_data;
+		assign NF_D = (czy_czytamy_flash) ? 8'bZ : flash_data_buf;
+		assign data = (czy_czytamy_data) ? 8'bZ : flash_data_buf;
 	
 	reg ft_start;
 	wire ft_done;
@@ -119,28 +95,35 @@ module Flash( //rename FlashBridge?
 	begin
 		case(state)
 			IDLE: begin
-				NF_CE <= 1'b1; //wylaczenie ukladu
-				NF_WE <= 1'b1; //wylaczenie zapisu
-				NF_OE <= 1'b1; //wylaczenie odczytu
-				ft_start <= 1'b0;
-				fb_done <= 1'b0;
+				NF_CE = 1'b1; //wylaczenie ukladu
+				NF_WE = 1'b1; //wylaczenie zapisu
+				NF_OE = 1'b1; //wylaczenie odczytu
+				ft_start = 1'b0;
+				fb_done = 1'b0;
+				czy_czytamy_flash = 0;
+				czy_czytamy_data = 0;
 			end
 			RW: begin
+				NF_CE = 1'b0;
 				if(direction_rw) begin
-					NF_CE <= 1'b0;
-					NF_OE <= 1'b0;
-					ft_start <= 1'b1;
+					NF_OE = 1'b0;
+					czy_czytamy_flash = 1;
+					czy_czytamy_data = 0;
+				end else begin
+					NF_WE = 1'b0;
+					czy_czytamy_flash = 0;
+					czy_czytamy_data = 1;
+					flash_data_buf = data;
 				end
-				else begin
-					NF_CE <= 1'b0;
-					NF_WE <= 1'b0;
-					ft_start <= 1'b1;
-				end
+				ft_start = 1'b1;
 			end
 			WAITING:
-				ft_start <= 0;
-			DONE:
-				fb_done <= 1;
+				ft_start = 0;
+			DONE: begin
+				if(direction_rw) 
+					flash_data_buf = NF_D;
+				fb_done = 1;
+			end
 		endcase
 	end
 	

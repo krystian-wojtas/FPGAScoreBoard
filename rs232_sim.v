@@ -34,7 +34,7 @@ reg FLOW;
 //reg [7:0] LAST_RECEIVED;
 
 wire [2:0] state;
-reg [7:0] rcv_data;
+reg [7:0] rcv_addr, rcv_data;
 reg [7:0] send_buff;
 
 
@@ -84,12 +84,7 @@ initial begin
 	*/
 	
 	write( 8'd0, 8'b00011000, 8'b00000011 ); #1000000;
-	write( 8'd0, 8'b00011001, 8'b00000110 ); #1000000;
-	write( 8'd0, 8'b00011010, 8'b00001100 ); #1000000;
-	#1000000;
-	write( 8'd1, 8'b00011001, 8'b11111111 ); #1000000;
 	write( 8'd1, 8'b00011000, 8'b11111111 ); #1000000;
-	write( 8'd1, 8'b00011010, 8'b11111111 ); #1000000;
 	
 end
 
@@ -97,7 +92,11 @@ end
 always @* begin
 	case(state)
 		IDLE: begin
+			rcv_addr = 8'dx;
 			rcv_data = 8'dx;
+		end
+		WAITING_ADDRESS: begin
+			rcv_addr = DATA_OUT;
 		end
 		WAITING_DATA: begin
 			rcv_data = DATA_OUT;
@@ -107,7 +106,7 @@ end
 
 always @(posedge CLK_50MHZ) begin
 	if( state == DONE_STATE ) begin
-			$display("%t [RS232] Received data '%b'", $time, rcv_data);
+			$display("%t [RS232] Received data '%b' from address '%b'", $time, rcv_data, rcv_addr);
 	end
 end
 

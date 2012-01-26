@@ -37,10 +37,8 @@ module fl_sim_test(
 		NF_STS
 	);
 	
-	reg [7:0] data = 8'b01010101;
-	
 	reg czy_czytamy = 0;
-	assign NF_D = (czy_czytamy) ? 8'bZ : data;
+	assign NF_D = (czy_czytamy) ? 8'bZ : 8'b01010101;
 	
 	initial begin
 		#10;

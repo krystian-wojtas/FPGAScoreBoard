@@ -26,7 +26,9 @@ module Manager_RX_FSM(
 	output reg fl_trg,
 	output reg [7:0] cmd_rx,
 	output reg [7:0] addr_rx,
-	output reg [7:0] data_rx
+	output reg [7:0] data_rx,
+	output reg [7:0] addr_tx,
+	output reg [7:0] data_tx
    );
 	
 	reg cmd_rx_buf;
@@ -96,6 +98,8 @@ module Manager_RX_FSM(
 			end
 			RX_WAITING_DATA: begin
 				data_rx = RS_DATAOUT;
+				addr_tx = addr_rx;
+				data_tx = data_rx;
 			end
 			RX_DONE:
 				fl_trg = 1'b1;				

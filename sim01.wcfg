@@ -66,10 +66,6 @@
          <obj_property name="ElementShortName">tx_trig</obj_property>
          <obj_property name="ObjectShortName">tx_trig</obj_property>
       </wvobject>
-      <wvobject fp_name="/FPGA_ScoreBoard_TOP_test/top/mgr/m_flash_fsm/addr_tx" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">addr_tx[7:0]</obj_property>
-         <obj_property name="ObjectShortName">addr_tx[7:0]</obj_property>
-      </wvobject>
       <wvobject fp_name="/FPGA_ScoreBoard_TOP_test/top/mgr/m_flash_fsm/data_tx" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">data_tx[7:0]</obj_property>
          <obj_property name="ObjectShortName">data_tx[7:0]</obj_property>
@@ -81,10 +77,6 @@
       <wvobject fp_name="/FPGA_ScoreBoard_TOP_test/top/mgr/m_tx_fsm/tx_trig" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">tx_trig</obj_property>
          <obj_property name="ObjectShortName">tx_trig</obj_property>
-      </wvobject>
-      <wvobject fp_name="/FPGA_ScoreBoard_TOP_test/top/mgr/m_tx_fsm/addr_tx" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">addr_tx[7:0]</obj_property>
-         <obj_property name="ObjectShortName">addr_tx[7:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/FPGA_ScoreBoard_TOP_test/top/mgr/m_tx_fsm/data_tx" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">data_tx[7:0]</obj_property>

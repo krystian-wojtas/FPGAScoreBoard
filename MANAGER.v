@@ -18,14 +18,12 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module MANAGER( CLK_50MHZ, RST, RS_FLOW, RS_DATAIN, RS_DATAOUT, RS_TRG_READ, RS_TRG_WRITE,
+module MANAGER( CLK_50MHZ, RST, RS_DATAIN, RS_DATAOUT, RS_TRG_WRITE,
 						RS_DONE, FL_DATA, FL_ADDR, FL_TRG, FL_STATUS, FL_FLOW );
 input CLK_50MHZ;
 input RST;
-output reg RS_FLOW; //TODO del
 output [7:0] RS_DATAIN;
 input [7:0] RS_DATAOUT;
-input RS_TRG_READ;
 output RS_TRG_WRITE;
 input RS_DONE;
 
@@ -128,7 +126,6 @@ Manager_TX_FSM m_tx_fsm(
 //	if( RST ) FL_FLOW = 1;
 //	
 //	RS_DATAIN = 8'bx;
-//	RS_TRG_READ = 1'bx;
 //	RS_TRG_WRITE = 1'bx;
 //	FL_TRG = 0;
 //	

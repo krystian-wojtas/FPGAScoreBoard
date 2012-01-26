@@ -26,11 +26,9 @@ module rs232_sim(
     );
 
 wire DONE;
-reg TRG_READ;
 reg TRG_WRITE;
 reg [7:0] DATA_IN;
 wire [7:0] DATA_OUT;
-reg FLOW;
 //reg [7:0] LAST_RECEIVED;
 
 wire [2:0] state;
@@ -48,10 +46,8 @@ UART u(
 		.TX(TX),
 		.RX(RX),
 		.CLK_50MHZ(CLK_50MHZ),
-		.FLOW(FLOW),
 		.DATA_IN(DATA_IN),
 		.DATA_OUT(DATA_OUT),
-		.TRG_READ(TRG_READ),
 		.TRG_WRITE(TRG_WRITE),
 		.DONE(DONE)
 	);
@@ -66,8 +62,6 @@ rs232_sim_fsm fsm(
 
 
 initial begin
-	FLOW = 1;
-	TRG_READ = 0;
 	TRG_WRITE = 0;
 	send_buff = 8'b00000011;
 	

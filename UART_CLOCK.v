@@ -39,7 +39,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 module UART_CLOCK #(parameter K=1, N=1)
 	(
-	input RST,
    input CLK,
    output CLK_RX,
    output CLK_TX
@@ -49,18 +48,6 @@ module UART_CLOCK #(parameter K=1, N=1)
 reg [N-1:0] acc = 0;
 reg [3:0] cnt = 0;
 reg clk_1_16 = 0;
-
-/*
-always @(posedge CLK)
-	begin
-	if(RST)
-		begin
-		acc = 0;
-		cnt = 0;
-		clk_1_16 = 0;
-		end
-	end
-*/
 
 always @(posedge CLK) acc<=acc+K; //(1)
 assign CLK_RX=acc[N-1];

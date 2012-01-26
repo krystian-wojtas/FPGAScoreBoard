@@ -45,7 +45,7 @@ module UART_CLOCK #(parameter K=1, N=1)
    );
 
 
-reg [N-1:0] acc = 0;
+reg [N-1:0] acc = 1'd0;
 reg [3:0] cnt = 0;
 reg clk_1_16 = 0;
 

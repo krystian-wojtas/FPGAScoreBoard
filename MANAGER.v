@@ -35,7 +35,7 @@ output FL_FLOW;
 
 //reg [7:0] data;
 
-wire [7:0] cmd_rx;
+wire cmd_rx;
 wire [7:0] addr_rx, addr_tx;
 wire [7:0] data_rx, data_tx;
 wire fl_trg, tx_trig;

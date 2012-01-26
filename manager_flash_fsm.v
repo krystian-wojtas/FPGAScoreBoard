@@ -21,7 +21,7 @@
 module Manager_Flash_FSM(
 	input CLK_50MHZ,
 	input RST,
-	input [7:0] cmd_rx,
+	input cmd_rx,
 	output reg FL_FLOW,
 	output reg [7:0] FL_ADDR,
 	inout [7:0] FL_DATA,
@@ -78,7 +78,7 @@ module Manager_Flash_FSM(
 				czy_czytamy = 0;
 			end
 			FL_RW: begin
-				FL_FLOW = cmd_rx[0];
+				FL_FLOW = cmd_rx;
 				FL_ADDR = addr_rx;
 				czy_czytamy = 0;
 				//FL_DATA = data_rx;

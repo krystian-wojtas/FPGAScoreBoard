@@ -33,7 +33,7 @@ module Manager_TX_FSM(
 							TX_WAITING_TRIG = 3'd1,
 							TX_WRITING_DATA = 3'd2;
 
-
+	reg [7:0] rs_datain_buf;
 
 	always @(posedge CLK_50MHZ) begin
 		if(RST) state_tx <= IDLE; // przebieg jalowy dla ustalenia sie state_tx w procesie flasha stanu idle
@@ -57,7 +57,7 @@ module Manager_TX_FSM(
 			IDLE:
 				RS_TRG_WRITE = 1'b0;
 			TX_WRITING_DATA: begin
-				RS_DATAIN = addr_tx;
+				RS_DATAIN = data_tx;
 				RS_TRG_WRITE = 1'b1;
 			end
 		endcase

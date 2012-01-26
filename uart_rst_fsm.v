@@ -18,9 +18,8 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module uart_rst_fsm(CLK_RST, MOD_RST, RST, CLK);
-output CLK_RST, MOD_RST;
-reg CLK_RST, MOD_RST;
+module uart_rst_fsm( MOD_RST, RST, CLK);
+output reg MOD_RST;
 input RST, CLK;
 
 parameter [2:0] //synopsys enum code
@@ -52,19 +51,16 @@ end
 
 always @* begin
 	next = 3'bx;
-	CLK_RST = 0;
 	MOD_RST = 0;
 	
 	case( state ) 
 		IDLE: begin /**********************/
 							next = S1;
-			CLK_RST = 1;
 			MOD_RST = 1;
 		end
 	
 		S1: begin /**********************/
 							next = S2;
-			CLK_RST = 1;
 			MOD_RST = 1;
 			//mod_cnt = 255;
 		end

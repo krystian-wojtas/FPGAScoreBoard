@@ -27,7 +27,6 @@ module Manager_Flash_FSM(
 	inout [7:0] FL_DATA,
 	input [7:0] addr_rx,
 	input [7:0] data_rx,
-	output reg [7:0] addr_tx,
 	output reg [7:0] data_tx,
 	output reg fb_start,
 	input fb_done,
@@ -35,9 +34,7 @@ module Manager_Flash_FSM(
 	output reg tx_trig
    );
 	
-//	assign FL_FLOW = cmd_rx[0];
-//	assign FL_ADDR = addr_rx;
-	
+	reg [7:0] data_tx_buf;
 	reg [2:0] state_fl; //TODO 2bits
 	localparam [2:0]	IDLE = 3'd0,
 							FL_WAITING_TRIG = 3'd1,
@@ -69,13 +66,18 @@ module Manager_Flash_FSM(
 		end
 	end
 
-
 	always @* begin	
+		FL_FLOW = 1'bX;
+		fb_start = 0;
+		tx_trig = 0;
+		czy_czytamy = 0;
+		FL_ADDR = 8'bX;
+		data_tx = 8'bX;
 		case( state_fl )
 			IDLE: begin
 				fb_start = 1'b0;
 				tx_trig = 1'b0;
-				czy_czytamy = 0;
+				czy_czytamy = 0;	
 			end
 			FL_RW: begin
 				FL_FLOW = cmd_rx;
@@ -88,6 +90,8 @@ module Manager_Flash_FSM(
 				//tx_trig = 1'b1; //TODO nastepny takt
 			end
 			FL_WAITING_RW: begin
+				FL_FLOW = cmd_rx;
+				FL_ADDR = addr_rx;
 				//czy_czytamy = 0;
 				//FL_FLOW = fl_flow;
 				//FL_ADDR = addr_rx;
@@ -97,12 +101,19 @@ module Manager_Flash_FSM(
 			end
 			TX_TRG: begin
 				czy_czytamy = 1;
-				data_tx = FL_DATA;
+				//data_tx_buf = FL_DATA;
 				tx_trig = 1'b1;
+				data_tx = data_tx_buf;
 			end
-			TX_TRG_DONE:
+			TX_TRG_DONE: begin
+				data_tx = data_tx_buf;
 				tx_trig = 1'b0;
+			end
 		endcase
 	end
-
+	
+	always @(posedge tx_trig)
+		data_tx_buf <= FL_DATA;
+	
 endmodule
+

@@ -84,12 +84,12 @@ initial begin
 	*/
 	
 	write( 8'd0, 8'b00011000, 8'b00000011 ); #1000000;
-	write( 8'd0, 8'b00011001, 8'b00001100 ); #1000000;
-	write( 8'd0, 8'b00011010, 8'b00110000 ); #1000000;
-	
+	write( 8'd0, 8'b00011001, 8'b00000110 ); #1000000;
+	write( 8'd0, 8'b00011010, 8'b00001100 ); #1000000;
+	#1000000;
 	write( 8'd1, 8'b00011001, 8'b11111111 ); #1000000;
-	write( 8'd1, 8'b00011010, 8'b11111111 ); #1000000;
 	write( 8'd1, 8'b00011000, 8'b11111111 ); #1000000;
+	write( 8'd1, 8'b00011010, 8'b11111111 ); #1000000;
 	
 end
 
@@ -107,7 +107,7 @@ end
 
 always @(posedge CLK_50MHZ) begin
 	if( state == DONE_STATE ) begin
-			$display("%t [RS232] Received data '%b'.", $time, rcv_data);
+			$display("%t [RS232] Received data '%b'", $time, rcv_data);
 	end
 end
 

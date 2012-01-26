@@ -102,7 +102,6 @@ module Flash( //rename FlashBridge?
 				fb_done = 1'b0;
 				czy_czytamy_flash = 1;
 				czy_czytamy_data = 0;
-				flash_data_buf = NF_D;
 			end
 			RW: begin
 				NF_CE = 1'b0;
@@ -111,7 +110,6 @@ module Flash( //rename FlashBridge?
 					NF_WE = 1'b1;
 					czy_czytamy_flash = 1;
 					czy_czytamy_data = 0;
-					flash_data_buf = NF_D;
 				end else begin
 					NF_OE = 1'b1;
 					NF_WE = 1'b0;
@@ -129,13 +127,11 @@ module Flash( //rename FlashBridge?
 					NF_WE = 1'b1;
 					czy_czytamy_flash = 1;
 					czy_czytamy_data = 0;
-					flash_data_buf = NF_D;
 				end else begin
 					NF_OE = 1'b1;
 					NF_WE = 1'b0;
 					czy_czytamy_flash = 0;
 					czy_czytamy_data = 1;
-					flash_data_buf = data;
 				end
 				ft_start = 0;
 				fb_done = 0;
@@ -149,8 +145,6 @@ module Flash( //rename FlashBridge?
 				czy_czytamy_data = 0;
 				if(direction_rw) 
 					flash_data_buf = NF_D;
-				else				
-					flash_data_buf = data;
 				fb_done = 1;
 			end
 			default: begin
@@ -161,7 +155,6 @@ module Flash( //rename FlashBridge?
 				fb_done = 0;	
 				czy_czytamy_flash = 1;
 				czy_czytamy_data = 0;
-				flash_data_buf = NF_D;
 			end
 		endcase
 	end

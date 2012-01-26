@@ -40,6 +40,9 @@ localparam [2:0]	IDLE 				 = 3'd0,
 						WAITING_ADDRESS = 3'd1,
 						WAITING_DATA 	 = 3'd2,
 						DONE_STATE		 = 3'd3;
+						
+reg [7:0] testdata [4:0];
+reg [7:0] testaddr [4:0];
 	
 UART u( 
 		.RST(RST),
@@ -60,31 +63,44 @@ rs232_sim_fsm fsm(
 		.state(state)
 	);
 
+integer i;
 
 initial begin
+	// *** TEST DATA ***
+	testdata[0][7:0] = 8'd2;
+	testdata[1][7:0] = 8'd3;
+	testdata[2][7:0] = 8'd5;
+	testdata[3][7:0] = 8'd7;
+	testdata[4][7:0] = 8'd11;
+
+
+	// *** TEST ADDR ***
+	testaddr[0][7:0] = 8'd123;
+	testaddr[1][7:0] = 8'd234;
+	testaddr[2][7:0] = 8'd345;
+	testaddr[3][7:0] = 8'd456;
+	testaddr[4][7:0] = 8'd567;
+	
 	TRG_WRITE = 0;
 	send_buff = 8'b00000011;
 	
 	$display("%t [RS232] Initialized.", $time);
 	$display("%t [RS232] Waiting before write.", $time);
 	@(negedge RST) #10000;
-		
-	/*
-	repeat(3) begin
-		write( send_buff );
-		send_buff = send_buff <<< 1;
-		#10;
+			
+	for( i=0; i<5; i=i+1 ) begin
+		#500000; write( 0, testaddr[i], testdata[i] ); 
 	end
-	*/
-	
-	write( 8'd0, 8'b00011000, 8'b00000011 ); #1000000;
-	write( 8'd0, 8'b00011001, 8'b00000110 ); #1000000;
-	write( 8'd0, 8'b00011010, 8'b00001100 ); #1000000;
-	#1000000;
-	write( 8'd1, 8'b00011001, 8'b11111111 ); #1000000;
-	write( 8'd1, 8'b00011000, 8'b11111111 ); #1000000;
-	write( 8'd1, 8'b00011010, 8'b11111111 ); #1000000;
-	
+
+	for( i=0; i<5; i=i+1 ) begin
+		#500000; write( 1, testaddr[i], 8'b11111111 ); #100;
+		if( rcv_data == testdata[i] ) $display("TEST: OK");
+		else begin
+			$display("TEST: ERROR !!!");
+			$display("RECEIVED: '%b', SHOULD BE: '%b'", rcv_data, testdata[i]); 
+		end
+	end
+
 end
 
 
@@ -101,7 +117,7 @@ end
 
 always @(posedge CLK_50MHZ) begin
 	if( state == DONE_STATE ) begin
-			$display("%t [RS232] Received data '%b'", $time, rcv_data);
+			$display("%t [RS232] Received data '%b' (%d)", $time, rcv_data, rcv_data);
 	end
 end
 
@@ -128,8 +144,8 @@ task write ( input [7:0] flow, input [7:0] addr, input [7:0] data	);
 		@(posedge CLK_50MHZ) #1;
 		TRG_WRITE = 0; #10;
 		
-		if( flow[0] == 0 ) $display("%t [RS232] Writing '%b' to '%b'.", $time, data, addr);
-		else 			       $display("%t [RS232] Reading from '%b'.", $time, addr);
+		if( flow[0] == 0 ) $display("%t [RS232] Writing '%b'(%d) to '%b'(%d).", $time, data, data, addr, addr);
+		else 			       $display("%t [RS232] Reading from '%b'(%d).", $time, addr, addr);
 	end
 endtask
 

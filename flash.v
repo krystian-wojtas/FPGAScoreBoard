@@ -63,7 +63,7 @@ module Flash( //rename FlashBridge?
 			NF_RP=0;
 	end
 	
-	always @(posedge CLK_50MHZ) //(posedge CLK_50MHZ) //TODO @* =
+	always @(posedge CLK_50MHZ)
 		if(RST) 
 			state <= IDLE;
 		else

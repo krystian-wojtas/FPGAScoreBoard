@@ -25,48 +25,44 @@ module FlashTimer //rename FlashTimer ??
 	 output reg done
 	);
 	
-localparam [2:0]  IDLE = 3'd0,
-						COUNTING = 3'd1,
-						STOP = 3'd2;
-reg [2:0] state, next;	
+	reg [1:0] state;
+	localparam [1:0]  IDLE = 2'd0,
+							COUNTING = 2'd1,
+							STOP = 2'd2;
 	
-	reg [3:0] cnt, next_cnt; //TODO czasy
+	reg [3:0] cnt; //TODO czasy
 		
-	always @(posedge CLK_50MHZ) begin
+	always @(posedge CLK_50MHZ) begin	
 		if(RST) begin
 			state <= IDLE;
+			cnt <= 0;
+			done <= 0;
 		end else begin
-			state <= next;
-			cnt <= next_cnt;
-		end
-	end
 		
-	always @* begin	
-		next <= 3'bx;
-		done <= 0;
-		
-		case(state) 
-			IDLE: begin
-				done <= 0;
-				next_cnt <= 0;
-				if(start)	next <= COUNTING;
-				else 			next <= IDLE;
-				next_cnt <= 0;				
-			end
-			
-			COUNTING: begin
-				if(cnt > 4'd5) next <= STOP;
-				else begin				
-						next <= COUNTING;
-						next_cnt <= cnt + 1;
+			case(state) 
+				IDLE: begin
+					if(start)	state <= COUNTING;
+					cnt <= 0;			
+					done <= 0;	
 				end
-			end
-			
-			STOP: begin
-								next <= IDLE;
-				done <= 1;
-			end
-		endcase
+				
+				COUNTING: begin
+					if(cnt > 4'd5) begin
+						state <= STOP;
+					end
+					else begin				
+							state <= COUNTING;
+							cnt <= cnt + 1;
+					end
+				end
+				
+				STOP: begin
+									state <= IDLE;
+					done <= 1;
+				end
+			endcase
+		
+		end
 	end
 	
 

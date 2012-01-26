@@ -32,7 +32,7 @@ module FPGA_ScoreBoard_TOP_test(
 	 wire [7:0] NF_A;
 	 wire [7:0] NF_D;
 	 wire NF_CE, NF_BYTE, NF_OE, NF_WE, NF_RP, NF_WP;
-	 reg NF_STS = 0;
+	 wire NF_STS;
 	 
 	 reg [7:0] rx_cnt = 0;
 	 

@@ -24,7 +24,7 @@ module Manager_Flash_FSM(
 	input [7:0] cmd_rx,
 	output reg FL_FLOW,
 	output reg [7:0] FL_ADDR,
-	output reg [7:0] FL_DATA,
+	inout [7:0] FL_DATA,
 	input [7:0] addr_rx,
 	input [7:0] data_rx,
 	output reg fb_start,

@@ -29,7 +29,7 @@ input RS_TRG_READ;
 output RS_TRG_WRITE;
 input RS_DONE;
 
-output [7:0] FL_DATA;
+inout [7:0] FL_DATA;
 output [7:0] FL_ADDR; 
 output FL_TRG;
 input FL_STATUS;

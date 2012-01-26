@@ -57,7 +57,7 @@ module Manager_TX_FSM(
 			IDLE:
 				RS_TRG_WRITE = 1'b0;
 			TX_WRITING_DATA: begin
-				RS_DATAIN = data_tx;
+				RS_DATAIN = addr_tx;
 				RS_TRG_WRITE = 1'b1;
 			end
 		endcase

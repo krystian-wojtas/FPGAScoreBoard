@@ -29,7 +29,7 @@ input RS_TRG_READ;
 output RS_TRG_WRITE;
 input RS_DONE;
 
-inout [7:0] FL_DATA;
+output [7:0] FL_DATA;
 output [7:0] FL_ADDR; 
 output FL_TRG;
 input FL_STATUS;
@@ -50,7 +50,9 @@ Manager_RX_FSM m_rx_fsm(
 	fl_trg,
 	cmd_rx,
 	addr_rx,
-	data_rx
+	data_rx,
+	addr_tx,
+	data_tx
 );
 
 Manager_Flash_FSM m_flash_fsm(
@@ -62,8 +64,6 @@ Manager_Flash_FSM m_flash_fsm(
 	.FL_DATA(FL_DATA),
 	.addr_rx(addr_rx),
 	.data_rx(data_rx),
-	.addr_tx(addr_tx),
-	.data_tx(data_tx),
 	.fb_start(FL_TRG),
 	.fb_done(FL_STATUS),
 	.fl_trg(fl_trg),

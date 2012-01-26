@@ -24,7 +24,7 @@ module Manager_RX_FSM(
 	input [7:0] RS_DATAOUT,
 	input RS_DONE,
 	output reg fl_trg,
-	output reg [7:0] cmd_rx,
+	output reg cmd_rx,
 	output reg [7:0] addr_rx,
 	output reg [7:0] data_rx
    );
@@ -81,13 +81,11 @@ module Manager_RX_FSM(
 	end
 
 
-	always @* begin	
+	always @(posedge CLK_50MHZ) begin
+		fl_trg = 1'b0;
+	
 		case( state_rx )
-			IDLE: begin
-				fl_trg = 1'b0;
-			end
 			RX_WAITING_CMD: begin
-				fl_trg = 1'b0;
 				cmd_rx_buf = RS_DATAOUT;
 			end
 			RX_WAITING_ADDR: begin

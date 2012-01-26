@@ -63,7 +63,7 @@ module Flash( //rename FlashBridge?
 			NF_RP=0;
 	end
 	
-	always @(posedge CLK_50MHZ)
+	always @(posedge CLK_50MHZ) //(posedge CLK_50MHZ) //TODO @* =
 		if(RST) 
 			state <= IDLE;
 		else
@@ -145,20 +145,20 @@ module Flash( //rename FlashBridge?
 				NF_WE = 1'b1;
 				NF_OE = 1'b1;
 				ft_start = 0;
-				fb_done = 1;
 				czy_czytamy_flash = 1;
 				czy_czytamy_data = 0;
 				if(direction_rw) 
 					flash_data_buf = NF_D;
 				else				
 					flash_data_buf = data;
+				fb_done = 1;
 			end
 			default: begin
 				NF_CE = 1'b1;
 				NF_WE = 1'b1;
 				NF_OE = 1'b1;
-				ft_start = 0;
-				fb_done = 1;
+				ft_start = 0;		
+				fb_done = 0;	
 				czy_czytamy_flash = 1;
 				czy_czytamy_data = 0;
 				flash_data_buf = NF_D;

@@ -63,7 +63,7 @@ module Manager_Flash_FSM(
 	end
 
 	always @* begin	
-		FL_FLOW = 1'bZ;
+		FL_FLOW = 1'bX;
 		fb_start = 0;
 		tx_trig = 0;
 		FL_ADDR = 8'bZ;

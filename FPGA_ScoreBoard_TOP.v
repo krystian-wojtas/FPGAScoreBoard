@@ -27,8 +27,8 @@ module FPGA_ScoreBoard_TOP(
 				//FLASH
 				output [21:0] NF_A,
 				inout [7:0] NF_D, //TODO inout
-				output NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP,
-				input NF_STS
+				output NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP
+				//input NF_STS
     );
 
 wire RS_TRG_WRITE, RS_DONE;
@@ -51,8 +51,8 @@ Flash fl( 	.CLK_50MHZ(CLK_50MHZ), .RST(BTN_WEST),
 				.addr(FL_ADDR), .data_in(fl_data_out), .data_out(fl_data_in),
 				.fb_start(FL_TRG),.fb_done(FL_STATUS), .direction_rw(FL_FLOW),
 				.NF_A(NF_A[7:0]), .NF_D(NF_D),
-				.NF_CE(NF_CE), .NF_BYTE(NF_BYTE), .NF_OE(NF_OE), .NF_RP(NF_RP), .NF_WE(NF_WE), .NF_WP(NF_WP),
-				.NF_STS(NF_STS)
+				.NF_CE(NF_CE), .NF_BYTE(NF_BYTE), .NF_OE(NF_OE), .NF_RP(NF_RP), .NF_WE(NF_WE), .NF_WP(NF_WP)
+				//.NF_STS(NF_STS)
 			);
 
 // MODULE: MANAGER

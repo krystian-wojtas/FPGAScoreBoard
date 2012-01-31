@@ -86,16 +86,18 @@ initial begin
 	
 	$display("%t [RS232] Initialized.", $time);
 	$display("%t [RS232] Waiting before write.", $time);
-	@(negedge RST) #10000;
+	@(negedge RST) #10;
 			
-	for( i=0; i<5; i=i+1 ) begin
-		#500000;
+	for( i=0; i<1; i=i+1 ) begin
+		#100000;
+		//#500000;
 		$display("---------------------------------");
 	   write( 0, testaddr[i], testdata[i] ); 	
 	end
 
-	for( i=0; i<5; i=i+1 ) begin
-		#500000; 
+	for( i=0; i<1; i=i+1 ) begin
+		#500000;
+		//#500000; 
 		$display("---------------------------------");
 		write( 1, testaddr[i], 8'b11111111 ); #100;	
 	end

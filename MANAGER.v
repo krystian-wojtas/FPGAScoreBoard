@@ -36,7 +36,7 @@ input FL_STATUS;
 output FL_FLOW;
 
 wire cmd_rx;
-wire [7:0] addr_rx, addr_tx;
+wire [7:0] addr_rx;
 wire [7:0] data_rx, data_tx;
 wire fl_rx_trg, tx_trig;
 

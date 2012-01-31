@@ -32,7 +32,7 @@ module FPGA_ScoreBoard_TOP_test(
 	 wire [7:0] NF_A;
 	 wire [7:0] NF_D;
 	 wire NF_CE, NF_BYTE, NF_OE, NF_WE, NF_RP, NF_WP;
-	 reg NF_STS = 0;
+	 //reg NF_STS = 0;
 	 
 	 reg [7:0] rx_cnt = 0;
 	 
@@ -47,15 +47,15 @@ module FPGA_ScoreBoard_TOP_test(
 				//FLASH
 				.NF_A(NF_A),
 				.NF_D(NF_D), //TODO inout
-				.NF_CE(NF_CE), .NF_BYTE(NF_BYTE), .NF_OE(NF_OE), .NF_RP(NF_RP), .NF_WE(NF_WE), .NF_WP(NF_WP),
-				.NF_STS(NF_STS)
+				.NF_CE(NF_CE), .NF_BYTE(NF_BYTE), .NF_OE(NF_OE), .NF_RP(NF_RP), .NF_WE(NF_WE), .NF_WP(NF_WP)
+				//.NF_STS(NF_STS)
 	 );
 	 
 	Flash_sim fl_sim(
 		.NF_A(NF_A),
 		.NF_D(NF_D), //TODO inout
-		.NF_CE(NF_CE), .NF_BYTE(NF_BYTE), .NF_OE(NF_OE), .NF_RP(NF_RP), .NF_WE(NF_WE), .NF_WP(NF_WP),
-		.NF_STS(NF_STS)
+		.NF_CE(NF_CE), .NF_BYTE(NF_BYTE), .NF_OE(NF_OE), .NF_RP(NF_RP), .NF_WE(NF_WE), .NF_WP(NF_WP)
+		//.NF_STS(NF_STS)
 	 );
 	 
 	 

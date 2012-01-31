@@ -22,7 +22,7 @@ module Flash( //rename FlashBridge?
 	input RST, //linia musi dotrzec rowniez do flash_clocka
 	input CLK_50MHZ,
 	output reg NF_CE, NF_BYTE, NF_OE, NF_RP, NF_WE, NF_WP,
-	input NF_STS,
+	//input NF_STS,
 	output [7:0] NF_A,
 	inout [7:0] NF_D,
 	input [7:0] addr, //do polaczenia z pozostalymi modulami
@@ -91,46 +91,90 @@ module Flash( //rename FlashBridge?
 	
 	////////////////////////////////////////////////////////////////////////////
 	
-	always @*
+//	always @*
+//	begin
+//		NF_CE = 1'b1; //wylaczenie ukladu
+//		NF_WE = 1'b1; //wylaczenie zapisu
+//		NF_OE = 1'b1; //wylaczenie odczytu
+//		
+//		ft_start = 1'b0;
+//		fb_done = 1'b0;
+//		
+//		czy_czytamy_flash = 1;
+//		data_out = flash_data_buf;
+//	
+//		case(state)
+//			IDLE: begin
+//			end
+//			RW: begin
+//				NF_CE = 1'b0;
+//				if(direction_rw) begin
+//					NF_OE = 1'b0;
+//				end else begin
+//					NF_WE = 1'b0;
+//					flash_data_buf = data_in;
+//					czy_czytamy_flash = 0;
+//				end
+//				ft_start = 1'b1;
+//			end
+//			WAITING: begin
+//				NF_CE = 1'b0;
+//				if(direction_rw) begin
+//					NF_OE = 1'b0;
+//				end else begin
+//					NF_WE = 1'b0;
+//					flash_data_buf = data_in;
+//					czy_czytamy_flash = 0;
+//				end
+//			end
+//			DONE: begin			
+//				if(direction_rw) 
+//					flash_data_buf = NF_D;
+//				fb_done = 1;
+//			end
+//		endcase
+//	end
+	
+	always @(posedge CLK_50MHZ)
 	begin
-		NF_CE = 1'b1; //wylaczenie ukladu
-		NF_WE = 1'b1; //wylaczenie zapisu
-		NF_OE = 1'b1; //wylaczenie odczytu
+		NF_CE <= 1'b1; //wylaczenie ukladu
+		NF_WE <= 1'b1; //wylaczenie zapisu
+		NF_OE <= 1'b1; //wylaczenie odczytu
 		
-		ft_start = 1'b0;
-		fb_done = 1'b0;
+		ft_start <= 1'b0;
+		fb_done <= 1'b0;
 		
-		czy_czytamy_flash = 1;
-		data_out = flash_data_buf;
+		czy_czytamy_flash <= 1;
+		data_out <= flash_data_buf;
 	
 		case(state)
 			IDLE: begin
 			end
 			RW: begin
-				NF_CE = 1'b0;
+				NF_CE <= 1'b0;
 				if(direction_rw) begin
-					NF_OE = 1'b0;
+					NF_OE <= 1'b0;
 				end else begin
-					NF_WE = 1'b0;
-					flash_data_buf = data_in;
-					czy_czytamy_flash = 0;
+					NF_WE <= 1'b0;
+					flash_data_buf <= data_in;
+					czy_czytamy_flash <= 0;
 				end
-				ft_start = 1'b1;
+				ft_start <= 1'b1;
 			end
 			WAITING: begin
-				NF_CE = 1'b0;
+				NF_CE <= 1'b0;
 				if(direction_rw) begin
-					NF_OE = 1'b0;
+					NF_OE <= 1'b0;
 				end else begin
-					NF_WE = 1'b0;
-					flash_data_buf = data_in;
-					czy_czytamy_flash = 0;
+					NF_WE <= 1'b0;
+					flash_data_buf <= data_in;
+					czy_czytamy_flash <= 0;
 				end
 			end
 			DONE: begin			
 				if(direction_rw) 
-					flash_data_buf = NF_D;
-				fb_done = 1;
+					flash_data_buf <= NF_D;
+				fb_done <= 1;
 			end
 		endcase
 	end

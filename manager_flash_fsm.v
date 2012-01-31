@@ -96,12 +96,11 @@ module Manager_Flash_FSM(
 				//FL_FLOW = fl_flow;
 				//FL_ADDR = addr_rx;
 				//addr_tx = addr_rx;
-				//data_tx = FL_DATA;
+				data_tx_buf = FL_DATA;
 				fb_start = 0;
 			end
 			TX_TRG: begin
 				czy_czytamy = 1;
-				//data_tx_buf = FL_DATA;
 				tx_trig = 1'b1;
 				data_tx = data_tx_buf;
 			end
@@ -111,9 +110,6 @@ module Manager_Flash_FSM(
 			end
 		endcase
 	end
-	
-	always @(posedge tx_trig)
-		data_tx_buf <= FL_DATA;
 	
 endmodule
 

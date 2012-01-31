@@ -38,14 +38,14 @@ output FL_FLOW;
 wire cmd_rx;
 wire [7:0] addr_rx, addr_tx;
 wire [7:0] data_rx, data_tx;
-wire fl_trg, tx_trig;
+wire fl_rx_trg, tx_trig;
 
 Manager_RX_FSM m_rx_fsm(
 	CLK_50MHZ,
 	RST,
 	RS_DATAOUT,
 	RS_DONE,
-	fl_trg,
+	fl_rx_trg,
 	cmd_rx,
 	addr_rx,
 	data_rx
@@ -64,7 +64,7 @@ Manager_Flash_FSM m_flash_fsm(
 	.data_tx(data_tx),
 	.fb_start(FL_TRG),
 	.fb_done(FL_STATUS),
-	.fl_trg(fl_trg),
+	.fl_trg(fl_rx_trg),
 	.tx_trig(tx_trig)
 );
 

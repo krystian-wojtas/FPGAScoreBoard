@@ -85,11 +85,15 @@ module Manager_Flash_FSM(
 			end
 			TX_TRG_DONE: begin
 				tx_trig = 1'b1;				
-				data_tx_buf = fl_data_in;
+				//data_tx_buf = fl_data_in;
 				data_tx = data_tx_buf;
 			end
 		endcase
 	end
+	
+always @(posedge tx_trig) begin
+	data_tx_buf <= fl_data_in;
+end
 	
 endmodule
 

@@ -89,16 +89,15 @@ initial begin
 	@(negedge RST) #10000;
 			
 	for( i=0; i<5; i=i+1 ) begin
-		#500000; write( 0, testaddr[i], testdata[i] ); 
+		#500000;
+		$display("---------------------------------");
+	   write( 0, testaddr[i], testdata[i] ); 	
 	end
 
 	for( i=0; i<5; i=i+1 ) begin
-		#500000; write( 1, testaddr[i], 8'b11111111 ); #100;
-		if( rcv_data == testdata[i] ) $display("TEST: OK");
-		else begin
-			$display("TEST: ERROR !!!");
-			$display("RECEIVED: '%b', SHOULD BE: '%b'", rcv_data, testdata[i]); 
-		end
+		#500000; 
+		$display("---------------------------------");
+		write( 1, testaddr[i], 8'b11111111 ); #100;	
 	end
 
 end

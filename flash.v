@@ -28,14 +28,12 @@ module Flash( //rename FlashBridge?
 	input [7:0] addr, //do polaczenia z pozostalymi modulami
 	input [7:0] data_in, //jak wyzej
 	output reg [7:0] data_out,
-	//input [7:0] datain,
-	//output reg [7:0] dataout,
 	input direction_rw, //kierunek odczyt lub zapis
 	input fb_start, //podnoszac linie z zew jest wyzwalaczem akcji zapisu lub odczytu; obnizajac z wew informuje ze akcja zostala wykonana
 	output reg fb_done
 	);
 	
-		assign NF_A[7:0] = addr[7:0]; //TODO czy dziala w obie strony ??
+		assign NF_A[7:0] = addr[7:0];
 		
 		reg [7:0] flash_data_buf;
 		reg czy_czytamy_flash;

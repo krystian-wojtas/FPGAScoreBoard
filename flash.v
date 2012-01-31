@@ -26,7 +26,10 @@ module Flash( //rename FlashBridge?
 	output [7:0] NF_A,
 	inout [7:0] NF_D,
 	input [7:0] addr, //do polaczenia z pozostalymi modulami
-	inout [7:0] data, //jak wyzej
+	input [7:0] data_in, //jak wyzej
+	output reg [7:0] data_out,
+	//input [7:0] datain,
+	//output reg [7:0] dataout,
 	input direction_rw, //kierunek odczyt lub zapis
 	input fb_start, //podnoszac linie z zew jest wyzwalaczem akcji zapisu lub odczytu; obnizajac z wew informuje ze akcja zostala wykonana
 	output reg fb_done
@@ -38,7 +41,6 @@ module Flash( //rename FlashBridge?
 		reg czy_czytamy_flash;
 		reg czy_czytamy_data;
 		assign NF_D = (czy_czytamy_flash) ? 8'bZ : flash_data_buf;
-		assign data = (czy_czytamy_data) ? 8'bZ : flash_data_buf;
 	
 	reg ft_start;
 	wire ft_done;
@@ -102,6 +104,7 @@ module Flash( //rename FlashBridge?
 				fb_done = 1'b0;
 				czy_czytamy_flash = 1;
 				czy_czytamy_data = 0;
+				data_out = flash_data_buf;
 			end
 			RW: begin
 				NF_CE = 1'b0;
@@ -110,12 +113,13 @@ module Flash( //rename FlashBridge?
 					NF_WE = 1'b1;
 					czy_czytamy_flash = 1;
 					czy_czytamy_data = 0;
+					data_out = flash_data_buf;
 				end else begin
 					NF_OE = 1'b1;
 					NF_WE = 1'b0;
 					czy_czytamy_flash = 0;
 					czy_czytamy_data = 1;
-					flash_data_buf = data;
+					flash_data_buf = data_in;
 				end
 				ft_start = 1'b1;
 				fb_done = 0;
@@ -127,11 +131,13 @@ module Flash( //rename FlashBridge?
 					NF_WE = 1'b1;
 					czy_czytamy_flash = 1;
 					czy_czytamy_data = 0;
+					data_out = flash_data_buf;
 				end else begin
 					NF_OE = 1'b1;
 					NF_WE = 1'b0;
 					czy_czytamy_flash = 0;
 					czy_czytamy_data = 1;
+					flash_data_buf = data_in;
 				end
 				ft_start = 0;
 				fb_done = 0;
@@ -142,9 +148,10 @@ module Flash( //rename FlashBridge?
 				NF_OE = 1'b1;
 				ft_start = 0;
 				czy_czytamy_flash = 1;
-				czy_czytamy_data = 0;
+				czy_czytamy_data = 0;				
 				if(direction_rw) 
 					flash_data_buf = NF_D;
+				data_out = flash_data_buf;
 				fb_done = 1;
 			end
 			default: begin
@@ -155,6 +162,7 @@ module Flash( //rename FlashBridge?
 				fb_done = 0;	
 				czy_czytamy_flash = 1;
 				czy_czytamy_data = 0;
+				data_out = flash_data_buf;
 			end
 		endcase
 	end

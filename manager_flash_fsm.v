@@ -25,6 +25,8 @@ module Manager_Flash_FSM(
 	output reg FL_FLOW,
 	output reg [7:0] FL_ADDR,
 	inout [7:0] FL_DATA,
+	input [7:0] fl_data_in,
+	output reg [7:0] fl_data_out,
 	input [7:0] addr_rx,
 	input [7:0] data_rx,
 	output reg [7:0] data_tx,
@@ -44,7 +46,7 @@ module Manager_Flash_FSM(
 							TX_TRG_DONE = 3'd5;
 							
 	reg czy_czytamy;
-	assign FL_DATA = (czy_czytamy) ? 8'bZ : data_rx ;
+	//assign FL_DATA = (czy_czytamy) ? 8'bZ : data_rx ;
 	
 	always @(posedge CLK_50MHZ) begin
 		if(RST) state_fl <= IDLE;
@@ -71,6 +73,7 @@ module Manager_Flash_FSM(
 		fb_start = 0;
 		tx_trig = 0;
 		czy_czytamy = 0;
+		fl_data_out = data_rx;
 		FL_ADDR = 8'bX;
 		data_tx = 8'bX;
 		case( state_fl )
@@ -78,11 +81,13 @@ module Manager_Flash_FSM(
 				fb_start = 1'b0;
 				tx_trig = 1'b0;
 				czy_czytamy = 0;	
+				fl_data_out = data_rx;
 			end
 			FL_RW: begin
 				FL_FLOW = cmd_rx;
 				FL_ADDR = addr_rx;
 				czy_czytamy = 0;
+				fl_data_out = data_rx;
 				//FL_DATA = data_rx;
 				//FL_DATA = data_rx;
 				//czy_czytamy = 1;

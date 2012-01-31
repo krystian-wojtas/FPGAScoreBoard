@@ -42,29 +42,28 @@ reg [2:0] state, next;
 	end
 		
 	always @* begin	
-		next <= 3'bx;
-		done <= 0;
+		next = 3'bZ;
+		done = 0;
+		next_cnt = 0;
 		
 		case(state) 
 			IDLE: begin
-				done <= 0;
-				next_cnt <= 0;
-				if(start)	next <= COUNTING;
-				else 			next <= IDLE;
-				next_cnt <= 0;				
+				done = 0;
+				if(start)	next = COUNTING;
+				else 			next = IDLE;			
 			end
 			
 			COUNTING: begin
-				if(cnt > 4'd5) next <= STOP;
+				if(cnt > 4'd5) next = STOP;
 				else begin				
-						next <= COUNTING;
-						next_cnt <= cnt + 1;
+						next = COUNTING;
+						next_cnt = cnt + 1;
 				end
 			end
 			
 			STOP: begin
-								next <= IDLE;
-				done <= 1;
+								next = IDLE;
+				done = 1;
 			end
 		endcase
 	end

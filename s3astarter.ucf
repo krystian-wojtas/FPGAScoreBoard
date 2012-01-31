@@ -97,14 +97,14 @@ OFFSET = OUT 20.000 AFTER "CLK_50MHZ" ;
 # Discrete Indicators (LED)
 ##############################################################################
 
-NET "led<0>"        LOC = "R20"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
-NET "led<1>"        LOC = "T19"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
-NET "led<2>"        LOC = "U20"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
-NET "led<3>"        LOC = "U19"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
-NET "led<4>"        LOC = "V19"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
-NET "led<5>"        LOC = "V20"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
-NET "led<6>"        LOC = "Y22"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
-NET "led<7>"        LOC = "W21"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
+#NET "led<0>"        LOC = "R20"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
+#NET "led<1>"        LOC = "T19"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
+#NET "led<2>"        LOC = "U20"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
+#NET "led<3>"        LOC = "U19"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
+#NET "led<4>"        LOC = "V19"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
+#NET "led<5>"        LOC = "V20"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
+#NET "led<6>"        LOC = "Y22"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
+#NET "led<7>"        LOC = "W21"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
 
 ##############################################################################
 # Character Display (LCD)
@@ -265,7 +265,7 @@ NET "led<7>"        LOC = "W21"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SL
 # Directional Push-Buttons (BTN)
 ##############################################################################
 
-#NET "button<0>"      LOC = "T16"  | IOSTANDARD = LVCMOS33 | PULLDOWN ;
+NET "BTN_WEST"      LOC = "T16"  | IOSTANDARD = LVCMOS33 | PULLDOWN ;
 #NET "BTN_NORTH"     LOC = "T14"  | IOSTANDARD = LVCMOS33 | PULLDOWN ;
 #NET "BTN_SOUTH"     LOC = "T15"  | IOSTANDARD = LVCMOS33 | PULLDOWN ;
 #NET "button<1>"      LOC = "U15"  | IOSTANDARD = LVCMOS33 | PULLDOWN ;
@@ -291,8 +291,8 @@ NET "led<7>"        LOC = "W21"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SL
 ## Serial Ports (RS232)
 ###############################################################################
 #
-#NET "RS232_DCE_RXD" LOC = "E16"  | IOSTANDARD = LVCMOS33 ;
-#NET "RS232_DCE_TXD" LOC = "F15"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
+NET "RS232_DCE_RXD" LOC = "E16"  | IOSTANDARD = LVCMOS33 ;
+NET "RS232_DCE_TXD" LOC = "F15"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
 #
 #NET "RS232_DTE_RXD" LOC = "F16"  | IOSTANDARD = LVCMOS33 ;
 #NET "RS232_DTE_TXD" LOC = "E15"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
@@ -378,7 +378,8 @@ NET "NF_RP"         LOC = "R22"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SL
 NET "NF_WE"         LOC = "AA22" | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
 NET "NF_WP"         LOC = "E14"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
 NET "NF_STS"        LOC = "P22"  | IOSTANDARD = LVCMOS33 ;
-#
+# NF_A<0> WSPOLNE Z NF_D<15>
+NET "NF_A<0>"      LOC = "T17"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
 NET "NF_A<1>"       LOC = "T18"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
 NET "NF_A<2>"       LOC = "R19"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
 NET "NF_A<3>"       LOC = "P18"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
@@ -402,6 +403,7 @@ NET "NF_A<20>"      LOC = "C22"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SL
 NET "NF_A<21>"      LOC = "C21"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
  
 # Note: NF_D<0> pin is shared with SPI_MISO pin which was previously declared.
+NET "NF_D<0>"   LOC = "AB20" | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
 NET "NF_D<1>"       LOC = "Y17"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
 NET "NF_D<2>"       LOC = "AA17" | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
 NET "NF_D<3>"       LOC = "U13"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
@@ -409,7 +411,7 @@ NET "NF_D<4>"       LOC = "AB11" | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SL
 NET "NF_D<5>"       LOC = "Y11"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
 NET "NF_D<6>"       LOC = "AB9"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
 NET "NF_D<7>"       LOC = "Y9"   | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
-NET "NF_D<8>"       LOC = "T20"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
+#NET "NF_D<8>"       LOC = "T20"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
 #NET "NF_D<9>"       LOC = "W22"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
 #NET "NF_D<10>"      LOC = "V22"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;
 #NET "NF_D<11>"      LOC = "U21"  | IOSTANDARD = LVCMOS33 | DRIVE = 8 | SLEW = SLOW ;

@@ -34,16 +34,23 @@ SERIAL_TX uart_tx
           (.CLK_TX(CLK_TX),.RST(RST),.SEND(tx_send),
            .TX(TX),.DONE(tx_done),.DATA(DATA_OUT));
 
+//rs232_tx uart_tx
+//          (.CLK_TX(CLK_TX),.RST(RST),.WR_EN(tx_send),
+//           .TX(TX),.DONE(tx_done),.DATA(DATA_OUT));
+
 always @(posedge CLK_WR)
 if(~RST) wr_cnt<=0;
 else
  if(WR_EN) wr_cnt<=wr_cnt+1;
 
+
 always @(posedge CLK_WR)
  if (WR_EN) FIFO[wr_cnt]<=DATA;
 
+
 assign DATA_OUT=FIFO[rd_cnt];								
-										
+		
+		
 always @(posedge CLK_WR) //(1)
  if(~RST) st<=0;
  else

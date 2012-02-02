@@ -62,31 +62,30 @@ module Manager_Flash_FSM(
 		end
 	end
 
-	always @* begin	
-		FL_FLOW = 1'bX;
-		fb_start = 0;
-		tx_trig = 0;
-		FL_ADDR = 8'bZ;
-		fl_data_out = data_rx;
-		data_tx = data_tx_buf;
+	always @(posedge CLK_50MHZ) begin	
+		FL_FLOW <= 1'bX;
+		fb_start <= 0;
+		tx_trig <= 0;
+		//FL_ADDR <= 8'bZ;
+		//fl_data_out <= data_rx;
+		data_tx <= data_tx_buf;
 		case( state_fl )
 			IDLE: begin
 			end
 			FL_RW: begin
-				FL_FLOW = cmd_rx;
-				FL_ADDR = addr_rx;
-				fl_data_out = data_rx;
-				fb_start = 1;
+				FL_FLOW <= cmd_rx;
+				FL_ADDR <= addr_rx;
+				fl_data_out <= data_rx;
+				fb_start <= 1;
 			end
 			FL_WAITING_RW: begin
-				FL_FLOW = cmd_rx;
-				FL_ADDR = addr_rx;
-				fl_data_out = data_rx;
+				FL_FLOW <= cmd_rx;
+				FL_ADDR <= addr_rx;	
 			end
 			TX_TRG_DONE: begin
-				tx_trig = 1'b1;				
-				//data_tx_buf = fl_data_in;
-				data_tx = data_tx_buf;
+				tx_trig <= 1'b1;				
+				//data_tx_buf <= fl_data_in;
+				//data_tx <= data_tx_buf;
 			end
 		endcase
 	end

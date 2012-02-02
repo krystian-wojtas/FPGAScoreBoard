@@ -24,7 +24,8 @@ module Manager_Flash_FSM(
 	input cmd_rx,
 	output reg FL_FLOW,
 	output reg [7:0] FL_ADDR,
-	inout [7:0] FL_DATA,
+	input [7:0] fl_data_in,
+	output reg [7:0] fl_data_out,
 	input [7:0] addr_rx,
 	input [7:0] data_rx,
 	output reg [7:0] data_tx,
@@ -41,10 +42,7 @@ module Manager_Flash_FSM(
 							FL_RW = 3'd2,
 							FL_WAITING_RW = 3'd3,
 							TX_TRG = 3'd4,
-							TX_TRG_DONE = 3'd5;
-							
-	reg czy_czytamy;
-	assign FL_DATA = (czy_czytamy) ? 8'bZ : data_rx ;
+							TX_TRG_DONE = 3'd5;							
 	
 	always @(posedge CLK_50MHZ) begin
 		if(RST) state_fl <= IDLE;
@@ -57,9 +55,7 @@ module Manager_Flash_FSM(
 				FL_RW:
 					state_fl <= FL_WAITING_RW;
 				FL_WAITING_RW:
-					if(fb_done) state_fl <= TX_TRG;
-				TX_TRG:
-					state_fl <= TX_TRG_DONE;
+					if(fb_done) state_fl <= TX_TRG_DONE;
 				TX_TRG_DONE:
 					state_fl <= FL_WAITING_TRIG;
 			endcase
@@ -70,46 +66,34 @@ module Manager_Flash_FSM(
 		FL_FLOW = 1'bX;
 		fb_start = 0;
 		tx_trig = 0;
-		czy_czytamy = 0;
-		FL_ADDR = 8'bX;
-		data_tx = 8'bX;
+		FL_ADDR = 8'bZ;
+		fl_data_out = data_rx;
+		data_tx = data_tx_buf;
 		case( state_fl )
 			IDLE: begin
-				fb_start = 1'b0;
-				tx_trig = 1'b0;
-				czy_czytamy = 0;	
 			end
 			FL_RW: begin
 				FL_FLOW = cmd_rx;
 				FL_ADDR = addr_rx;
-				czy_czytamy = 0;
-				//FL_DATA = data_rx;
-				//FL_DATA = data_rx;
-				//czy_czytamy = 1;
+				fl_data_out = data_rx;
 				fb_start = 1;
-				//tx_trig = 1'b1; //TODO nastepny takt
 			end
 			FL_WAITING_RW: begin
 				FL_FLOW = cmd_rx;
 				FL_ADDR = addr_rx;
-				//czy_czytamy = 0;
-				//FL_FLOW = fl_flow;
-				//FL_ADDR = addr_rx;
-				//addr_tx = addr_rx;
-				data_tx_buf = FL_DATA;
-				fb_start = 0;
-			end
-			TX_TRG: begin
-				czy_czytamy = 1;
-				tx_trig = 1'b1;
-				data_tx = data_tx_buf;
+				fl_data_out = data_rx;
 			end
 			TX_TRG_DONE: begin
+				tx_trig = 1'b1;				
+				//data_tx_buf = fl_data_in;
 				data_tx = data_tx_buf;
-				tx_trig = 1'b0;
 			end
 		endcase
 	end
+	
+always @(posedge tx_trig) begin
+	data_tx_buf <= fl_data_in;
+end
 	
 endmodule
 

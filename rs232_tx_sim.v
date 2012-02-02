@@ -26,21 +26,21 @@ wire TX;
 reg RST;
 reg [7:0]DATA = 8'b11010010;
 wire DONE;
-reg TRG;
+reg WR_EN;
 
-rs232_tx tx( .CLK_TX(CLK), .RST(RST), .TX(TX), .DATA(DATA), .TRG(TRG), .DONE(DONE) );
+rs232_tx tx( .CLK_TX(CLK), .RST(RST), .TX(TX), .DATA(DATA), .WR_EN(WR_EN), .DONE(DONE) );
 
 initial begin
 	RST = 0;
-	TRG = 0;
+	WR_EN = 0;
 	CLK = 0;
 	#30;
 	RST = 1;
 	#30;
 	RST = 0;
 	#30;
-	TRG = 1;
-	@(posedge DONE) TRG = 0;
+	WR_EN = 1;
+	@(posedge DONE) WR_EN = 0;
 end
 
 

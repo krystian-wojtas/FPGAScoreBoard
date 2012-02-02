@@ -18,14 +18,14 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module rs232_tx( CLK_TX, RST, TX, DATA, TRG, DONE
+module rs232_tx( CLK_TX, RST, TX, DATA, WR_EN, DONE
     );
-
+	 
 input CLK_TX;
 input RST;
 output reg TX;
 input [7:0]DATA;
-input TRG;
+input WR_EN;
 output reg DONE;
 
 // --------------------
@@ -55,7 +55,7 @@ always @* begin
 							next = WAITING_TRG;
 		end
 		WAITING_TRG: begin 
-			if( TRG )	next = SEND_START;
+			if( WR_EN )	next = SEND_START;
 			else			next = WAITING_TRG;
 		end
 		SEND_START: begin
@@ -100,7 +100,7 @@ always @(posedge CLK_TX) begin
 	endcase
 end
 
-//always @(posedge TRG) begin
+//always @(posedge WR_EN) begin
 //	writing <= 8;
 //	data <= DATA;
 //end

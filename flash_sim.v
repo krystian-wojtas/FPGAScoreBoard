@@ -27,24 +27,26 @@ module Flash_sim
 	//output reg NF_STS
 	);
 	localparam N=2**DEPTH;	
-	reg [7:0] flash_storage [N-1:0];
+	reg [6:0] flash_storage [N-1:0];
+	reg [6:0] addr_buff;
 	
 	reg czy_czytamy = 0;
-	assign NF_D = (czy_czytamy) ? 8'bZ : flash_storage[NF_A];
+	assign NF_D = (czy_czytamy) ? 8'bZ : flash_storage[NF_A[6:0]];
 
 	always @(negedge NF_WE) begin
 		czy_czytamy = 1;
-		#10;
-		flash_storage[NF_A][7:0] = NF_D[7:0];
-		#10;
+		#100;
+		addr_buff = NF_A[6:0];
+		flash_storage[addr_buff][6:0] = NF_D[6:0];
+		#100;
 		czy_czytamy = 0;
-		$display("%t [FLASH] Zapis pod adres 0x%b bajtu %b(%d)", $time, NF_A[7:0], flash_storage[NF_A][7:0], flash_storage[NF_A][7:0]);
+		$display("%t [FLASH] Zapis pod adres %b bajtu %b(%d)", $time, addr_buff, flash_storage[addr_buff][6:0], flash_storage[addr_buff][6:0]);
 	end
 
 	always @(negedge NF_OE) begin	
 		czy_czytamy = 0;
 		//NF_D[7:0] = flash_storage[NF_A][7:0];
-		$display("%t [FLASH] Odczyt z adresu 0x%b bajtu %b(%d)", $time, NF_A[7:0],  flash_storage[NF_A][7:0], flash_storage[NF_A][7:0]);
+		$display("%t [FLASH] Odczyt z adresu %b bajtu %b(%d)", $time, addr_buff,  flash_storage[addr_buff][6:0], flash_storage[addr_buff][6:0]);
 	end
 
 endmodule

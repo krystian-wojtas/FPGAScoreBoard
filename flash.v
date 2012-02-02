@@ -49,7 +49,6 @@ module Flash( //rename FlashBridge?
 			DONE = 3'd3;
 
 	reg [2:0] state;
-	reg [2:0] next_state;
 
 	always @(posedge CLK_50MHZ)
 	begin
@@ -63,29 +62,70 @@ module Flash( //rename FlashBridge?
 	end
 	
 	always @(posedge CLK_50MHZ)
-		if(RST) 
-			state <= IDLE;
-		else
-			state <= next_state;
-
-	always @*
+		begin
+			if(RST) 
+				state <= IDLE;
+			else begin			
+				case(state)
+					IDLE:
+						if(fb_start == 1'b1) //uklad nadrzedny nakazal wykonanie akcji
+							state <= RW;
+						else
+							state <= IDLE;
+					RW: 			
+						state <= WAITING;
+					WAITING:
+						if(ft_done)
+							state <= DONE;
+						else
+							state <= WAITING;
+					DONE:
+						state <= IDLE;
+				endcase
+			end
+	end
+	
+	always @(posedge CLK_50MHZ)
 	begin
-		next_state = 3'dx;
+		NF_CE <= 1'b1; //wylaczenie ukladu
+		NF_WE <= 1'b1; //wylaczenie zapisu
+		NF_OE <= 1'b1; //wylaczenie odczytu
+		
+		ft_start <= 1'b0;
+		fb_done <= 1'b0;
+		
+		czy_czytamy_flash <= 1;
+		data_out <= flash_data_buf;
+	
 		case(state)
-			IDLE:
-				if(fb_start == 1'b1) //uklad nadrzedny nakazal wykonanie akcji
-					next_state = RW;
-				else
-					next_state = IDLE;
-			RW: 			
-				next_state = WAITING;
-			WAITING:
-				if(ft_done)
-					next_state = DONE;
-				else
-					next_state = WAITING;
-			DONE:
-				next_state = IDLE;
+			IDLE: begin
+			end
+			RW: begin
+				NF_CE <= 1'b0;
+				if(direction_rw) begin
+					NF_OE <= 1'b0;
+				end else begin
+					NF_WE <= 1'b0;
+					flash_data_buf <= data_in;
+					czy_czytamy_flash <= 0;
+				end
+				ft_start <= 1'b1;
+			end
+			WAITING: begin
+				NF_CE <= 1'b0;
+				if(direction_rw) begin
+					NF_OE <= 1'b0;
+				end else begin
+					NF_WE <= 1'b0;
+					//flash_data_buf <= data_in;
+					czy_czytamy_flash <= 0;
+				end
+			end
+			DONE: begin			
+				if(direction_rw) 
+					flash_data_buf <= NF_D;
+				fb_done <= 1;
+			end
 		endcase
 	end
 	
@@ -134,50 +174,5 @@ module Flash( //rename FlashBridge?
 //			end
 //		endcase
 //	end
-	
-	always @(posedge CLK_50MHZ)
-	begin
-		NF_CE <= 1'b1; //wylaczenie ukladu
-		NF_WE <= 1'b1; //wylaczenie zapisu
-		NF_OE <= 1'b1; //wylaczenie odczytu
-		
-		ft_start <= 1'b0;
-		fb_done <= 1'b0;
-		
-		czy_czytamy_flash <= 1;
-		data_out <= flash_data_buf;
-	
-		case(state)
-			IDLE: begin
-			end
-			RW: begin
-				NF_CE <= 1'b0;
-				if(direction_rw) begin
-					NF_OE <= 1'b0;
-				end else begin
-					NF_WE <= 1'b0;
-					flash_data_buf <= data_in;
-					czy_czytamy_flash <= 0;
-				end
-				ft_start <= 1'b1;
-			end
-			WAITING: begin
-				NF_CE <= 1'b0;
-				if(direction_rw) begin
-					NF_OE <= 1'b0;
-				end else begin
-					NF_WE <= 1'b0;
-					flash_data_buf <= data_in;
-					czy_czytamy_flash <= 0;
-				end
-			end
-			DONE: begin			
-				if(direction_rw) 
-					flash_data_buf <= NF_D;
-				fb_done <= 1;
-			end
-		endcase
-	end
-	
 
 endmodule

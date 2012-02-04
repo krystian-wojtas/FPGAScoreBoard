@@ -23,12 +23,15 @@ module rs232_tx( CLK_TX, RST, TX, DATA, WR_EN, DONE
 	 
 input CLK_TX;
 input RST;
-output reg TX;
+output TX;
 input [7:0]DATA;
 input WR_EN;
 output reg DONE;
 
 // --------------------
+
+reg tx_;
+assign TX = tx_;
 
 reg [7:0] data_buf;
 reg [3:0] data_left;
@@ -78,54 +81,37 @@ end
 
 
 always @(posedge CLK_TX) begin
-	DONE <= 0;
-	TX <= 0;
-	case( state )
-		IDLE: begin end
-		WAITING_TRG: begin 
-			data_left <= 7;
-			data_buf <= DATA;
-		end
-		SEND_START: begin
-			$display("SENDING START");
-			TX <= 1;
-		end
-		WAITING_WRITE: begin 
-			data_left <= data_left - 1;
-			TX <= data_buf[0];
-			$display("SENDING BIT: %b", data_buf[0]);
-			data_buf[7:0] <= {0, data_buf[7:1]};
-		end
-		DONE_WRITING: begin 			
-			$display("DONE");
-			DONE <= 1;
-			// HERE IS STOP-BIT
-		end
-	endcase
+	if( ~RST ) begin
+		DONE <= 1;
+		tx_ <= 1;
+	end else begin
+		case( state )
+			IDLE: begin end
+			WAITING_TRG: begin 
+				data_left <= 7;
+				data_buf <= DATA;
+				tx_ <= 1;
+//				$display("waiting_trg"); 
+			end
+			SEND_START: begin
+//				$display("SENDING START");
+				tx_ <= 0;
+				DONE <= 0;
+			end
+			WAITING_WRITE: begin 
+				data_left <= data_left - 1;
+				tx_ <= ~data_buf[0];
+//				$display("SENDING BIT: %b", data_buf[0]);
+				data_buf[7:0] <= {0, data_buf[7:1]};
+			end
+			DONE_WRITING: begin 			
+//				$display("DONE");
+				DONE <= 1;
+				// HERE IS STOP-BIT
+			end
+		endcase
+	end
 end
 
-//always @(posedge WR_EN) begin
-//	writing <= 8;
-//	data <= DATA;
-//end
-//
-//
-//always @(posedge CLK_TX) begin
-//	if( RST ) begin
-//		TX <= 0;
-//		writing <= 0;
-//		DONE <= 1;
-//	end else begin
-//		if( writing > 0 ) begin
-//			TX <= data[0];
-//			data[7:0] <= {0,data[7:1]};
-//			writing <= writing - 1;
-//			DONE <= 0;
-//		end else begin
-//			TX <= 0;
-//			DONE <= 1;
-//		end
-//	end
-//end
 
 endmodule

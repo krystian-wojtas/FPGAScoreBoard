@@ -44,32 +44,36 @@ reg [2:0] state, next;
 
 
 always @(posedge CLK_TX) begin
-	if( RST ) state <= IDLE;
+	if( ~RST ) state <= IDLE;
 	else state <= next;
 end
 
 
 always @* begin
-	case( state )
-		IDLE: begin 
-							next = WAITING_TRG;
-		end
-		WAITING_TRG: begin 
-			if( WR_EN )	next = SEND_START;
-			else			next = WAITING_TRG;
-		end
-		SEND_START: begin
-							next = WAITING_WRITE;
-		end
-		WAITING_WRITE: begin 
-			if( data_left > 0 )
-							next = WAITING_WRITE;
-			else			next = DONE_WRITING;
-		end
-		DONE_WRITING: begin 
-							next = IDLE;
-		end
-	endcase
+	if( ~RST )
+		next = IDLE;
+	else begin
+		case( state )
+			IDLE: begin 
+								next = WAITING_TRG;
+			end
+			WAITING_TRG: begin 
+				if( WR_EN )	next = SEND_START;
+				else			next = WAITING_TRG;
+			end
+			SEND_START: begin
+								next = WAITING_WRITE;
+			end
+			WAITING_WRITE: begin 
+				if( data_left > 0 )
+								next = WAITING_WRITE;
+				else			next = DONE_WRITING;
+			end
+			DONE_WRITING: begin 
+								next = IDLE;
+			end
+		endcase
+	end
 end
 
 

@@ -19,9 +19,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module clock(
-	  output reg CLK_50MHZ
+	  output reg CLK_50MHZ//,
+	  //input RST
     );
-	 
+	
 	initial CLK_50MHZ = 0;
 	 
 	/*** SIMULATION CLK 50 MHZ ***/

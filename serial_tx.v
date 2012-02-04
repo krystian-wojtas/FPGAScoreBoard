@@ -6,12 +6,12 @@
 // http://zh.prz-rzeszow.pl
 // e-mail: zhajduk@prz-rzeszow.pl
 //
-// Ten kod Ÿród³owy mo¿e podlegaæ wolnej redystrybucji i/lub modyfikacjom 
-// na ogólnych zasadach okreœlonych licencj¹ GNU General Public License.
+// Ten kod rdowy moe podlega wolnej redystrybucji i/lub modyfikacjom 
+// na oglnych zasadach okrelonych licencj GNU General Public License.
 //
-// Autor wyra¿a nadziejê, ¿e kod wirtualnego komponentu bêdzie u¿yteczny
-// jednak nie udziela ¯ADNEJ GWARANCJI dotycz¹cej jego sprawnoœci
-// oraz przydatnoœci dla partykularnych zastosowañ.
+// Autor wyraa nadziej, e kod wirtualnego komponentu bdzie uyteczny
+// jednak nie udziela ADNEJ GWARANCJI dotyczcej jego sprawnoci
+// oraz przydatnoci dla partykularnych zastosowa.
 //
 ////////////////////////////////////////////////////////////////////////////////// 
 
